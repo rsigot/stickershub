@@ -2,12 +2,18 @@ import React, { useContext, useState, useEffect } from 'react';
 import { UALContext } from 'ual-reactjs-renderer';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import './Css/LoginUAL.css';
-import { collection, addDoc, query, where, getDocs, updateDoc, onSnapshot } from 'firebase/firestore'; // Agregamos onSnapshot
+import { collection, addDoc, query, where, getDocs, updateDoc, onSnapshot, doc } from 'firebase/firestore';
 import { db } from '../Firebase/firebase.js';
-import logo from '../Img/Logo-sh1-text.png'; // Asegúrate de que la ruta sea correcta
+import logo from '../Img/Logo-sh1-text.png';
+
+const cache = {}; // Cache para almacenar datos que no cambian con frecuencia
 
 // Función para verificar el estado de whitelist en Firestore
 async function checkWhitelistStatus(userWallet) {
+    if (cache[userWallet]) {
+        return cache[userWallet].isWhitelisted;
+    }
+
     try {
         console.log('Buscando usuario en la whitelist:', userWallet);
         const usersRef = collection(db, 'users');
@@ -15,21 +21,13 @@ async function checkWhitelistStatus(userWallet) {
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
-            console.log('Documentos encontrados para el usuario:', userWallet);
-            const userData = querySnapshot.docs[0].data(); // Asumimos que solo hay un documento por usuario
-
-            // Convertir el valor del campo whitelist a un booleano explícito
+            const userData = querySnapshot.docs[0].data();
             const isWhitelisted = userData.whitelist === true;
 
-            if (isWhitelisted) {
-                console.log('Usuario en whitelist:', userWallet);
-                return true;
-            } else {
-                console.log('Usuario no está en whitelist:', userWallet);
-                return false;
-            }
+            cache[userWallet] = { isWhitelisted }; // Guardar en cache
+
+            return isWhitelisted;
         } else {
-            console.error('No se encontró ningún documento para el usuario:', userWallet);
             return false;
         }
     } catch (error) {
@@ -57,15 +55,14 @@ export function LoginUAL({ onLogin }) {
     useEffect(() => {
         // Verificar si hay un usuario activo antes de suscribirse al snapshot
         if (ual?.activeUser?.accountName) {
-            const unsubscribe = onSnapshot(query(usersCol, where('wallet', '==', ual?.activeUser?.accountName)), (snapshot) => {
-                snapshot.docChanges().forEach((change) => {
-                    if (change.type === "modified") {
-                        const newData = change.doc.data();
-                        setCoins(newData.coins);
-                    }
-                });
+            const userDocRef = doc(db, 'users', ual.activeUser.accountName);
+            const unsubscribe = onSnapshot(userDocRef, (docSnapshot) => {
+                if (docSnapshot.exists()) {
+                    const newData = docSnapshot.data();
+                    setCoins(newData.coins);
+                }
             });
-    
+
             // Cleanup function para desuscribirse
             return () => unsubscribe();
         }
@@ -77,7 +74,7 @@ export function LoginUAL({ onLogin }) {
             const userQuery = query(usersCol, where('wallet', '==', userWallet));
             const querySnapshot = await getDocs(userQuery);
 
-            if (querySnapshot.docs.length > 0) {
+            if (!querySnapshot.empty) {
                 // Usuario ya existe, actualizar lastActive
                 const userDoc = querySnapshot.docs[0];
                 await updateDoc(userDoc.ref, { lastActive: new Date() });
@@ -92,7 +89,7 @@ export function LoginUAL({ onLogin }) {
                 setIsWhitelisted(isWhitelisted);
             } else {
                 // Usuario no existe, crear nuevo documento con wallet, lastActive y coins
-                await addDoc(usersCol, {
+                const newUserDoc = await addDoc(usersCol, {
                     wallet: userWallet,
                     lastActive: new Date(),
                     coins: 0
