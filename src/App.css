@@ -1,3 +1,10 @@
+body, html {
+  background-image: url('https://i.gifer.com/WBVk.gif');
+  background-size: auto; /* or you can specify a specific size, e.g., '150px' */
+  background-repeat: repeat;
+  overflow: auto;
+}
+
 .App {
   text-align: center;
 }

@@ -1,15 +1,105 @@
+
 .WAXUALbutton {
-    position: fixed;
     top: 20px;
-    right: 150px;
-    background-color: #00ff00;
-    color: #1b1b1b;
-    padding: 10px 20px;
-    border-radius: 5px;
-    text-decoration: none;
+    right: 20px;
+
+    background-image: url('https://i.imgur.com/RQNSpxq.png'); /* URL de la imagen */
+    background-size: cover; /* Ajusta el tamaño de la imagen para cubrir todo el botón */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
+    background-position: center; /* Centra la imagen */
+    width: 120px; /* Ajusta el ancho del botón según tu preferencia */
+    height: 39px; /* Ajusta la altura del botón según tu preferencia */
+    border: none; /* Quita el borde del botón */
+    color: white; /* Color del texto */
+    font-size: 18px; /* Tamaño del texto */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    text-align: center; /* Centra el texto */
+    border-radius: 5px; /* Bordes redondeados */
+    position: fixed;
     z-index: 2;
-    }
+}
 
 .WAXUALbutton:hover {
-    background-color: #00dd00; /* Cambia el color al pasar el mouse */
-    }    
+    opacity: 0.8; /* Le da un efecto de opacidad al pasar el cursor */
+    cursor: pointer; /* Asegura que el cursor siga siendo una mano */
+}  
+    
+.goBack {
+    top: 60px;
+    right: 20px;
+
+    background-image: url('https://i.imgur.com/RQNSpxq.png'); /* URL de la imagen */
+    background-size: cover; /* Ajusta el tamaño de la imagen para cubrir todo el botón */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
+    background-position: center; /* Centra la imagen */
+    width: 120px; /* Ajusta el ancho del botón según tu preferencia */
+    height: 39px; /* Ajusta la altura del botón según tu preferencia */
+    border: none; /* Quita el borde del botón */
+    color: white; /* Color del texto */
+    font-size: 18px; /* Tamaño del texto */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    text-align: center; /* Centra el texto */
+    border-radius: 5px; /* Bordes redondeados */
+    position: fixed;
+    z-index: 2;
+}
+
+.goBack:hover {
+    opacity: 0.8; /* Le da un efecto de opacidad al pasar el cursor */
+    cursor: pointer; /* Asegura que el cursor siga siendo una mano */
+}
+
+.coins {
+    width: 21px;
+    height: 21px;
+    align-items: center;
+    top: 4px;
+    position: relative;
+}
+
+.logo-image {
+    width: 50%;
+    height: 50%;
+}
+
+.walletspan {
+    margin: 10px 0;
+    font-size: 18px;
+    position: fixed;
+    top: 110px;
+    left: 20px;
+    color: white;
+    align-items:center;
+    display: inline-block;
+    text-align:left;
+    text-shadow: 
+        -1px -1px 0 #000,  
+         1px -1px 0 #000,
+        -1px  1px 0 #000,
+         1px  1px 0 #000; /* Sombra para borde negro */
+}
+
+.title {
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    justify-content:center; /* Centrado horizontal */
+    align-items:center; /* Centrado vertical */
+    text-align: left;
+    color: white;
+    text-shadow: 
+        -1px -1px 0 #000,  
+         1px -1px 0 #000,
+        -1px  1px 0 #000,
+         1px  1px 0 #000; /* Sombra para borde negro */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+.walletspan {
+    top: 80px;
+}
+}

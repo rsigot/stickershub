@@ -7,8 +7,6 @@ import { UALProvider } from 'ual-reactjs-renderer';
 import { Wax } from "@eosdacio/ual-wax";
 import { Anchor } from 'ual-anchor';
 
-import { HashRouter } from 'react-router-dom';
-
 //import { Ledger } from 'ual-ledger';
 //import { Scatter } from 'ual-scatter';
 //import { Starteos } from 'ual-starteos';
@@ -43,7 +41,7 @@ const anchor = new Anchor([chains], { appName: appName });
 
 ReactDOM.render(
     <>
-    <HashRouter>
+    
         <UALProvider
             appName={appName}
             authenticators={[wcw, anchor]}
@@ -51,7 +49,7 @@ ReactDOM.render(
         >
             <App rpc={rpc} />
         </UALProvider>
-    </HashRouter>    
+       
     </>,
     document.getElementById('root')
 );

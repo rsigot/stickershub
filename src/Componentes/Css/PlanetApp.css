@@ -1,0 +1,322 @@
+/* src/css/PlanetApp.css */
+body,
+html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background-color: black;
+}
+
+.login-container {
+    margin-bottom: 20px;
+}
+
+.planet-app {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+}
+
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.coming-soon {
+    position: absolute;
+    top: 20%;
+    left: 10%;
+    width: 100px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(231, 6, 6, 0.781);
+    /* Fondo oscuro semitransparente */
+    color: white;
+    /* Texto blanco */
+    font-size: 11px;
+    /* Ajusta el tamaño del texto según tus necesidades */
+    font-weight: bold;
+    /* Texto en negrita */
+    text-align: center;
+    z-index: 1;
+    /* Asegura que esté por encima de otros elementos */
+    pointer-events: none;
+    /* Permite hacer clic a través del cartel */
+    border-radius: 5px;
+    /* Añade bordes redondeados si es necesario */
+}
+
+.yellow {
+    background: rgba(175, 172, 7, 0.925);
+    /* Fondo oscuro semitransparente */
+}
+
+.coming-soon-buttons {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 5px 10px;
+    background: rgba(231, 6, 6, 0.781);
+    /* Fondo rojo semitransparente */
+    color: white;
+    /* Texto blanco */
+    font-size: 11px;
+    /* Ajusta el tamaño del texto según tus necesidades */
+    font-weight: bold;
+    /* Texto en negrita */
+    text-align: center;
+    z-index: 2;
+    /* Asegura que esté por encima de otros elementos */
+    pointer-events: none;
+    /* Permite hacer clic a través del cartel */
+    border-radius: 5px;
+    /* Añade bordes redondeados si es necesario */
+}
+
+.planet {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    z-index: 1;
+}
+
+#earth {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 100%;
+    background-image: url('https://i.imgur.com/aUiE0iY.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.satellite {
+    position: absolute;
+    width: 120px;
+    height: 200px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    background-repeat: no-repeat;
+}
+
+.satellite:hover {
+    transform: scale(1.1);
+}
+
+#satellite1 {
+    top: calc(-5% - 100px);
+    left: calc(50% - 60px);
+    background-image: url('https://i.imgur.com/edzPCPI.png');
+    background-size: contain;
+}
+
+#satellite2 {
+    top: calc(55% - 100px);
+    left: calc(-13% - 60px);
+    background-image: url('https://i.imgur.com/uubRpmr.png');
+    background-size: contain;
+}
+
+#satellite3 {
+    top: calc(113% - 100px);
+    left: calc(50% - 60px);
+    background-image: url('https://i.imgur.com/KnlOy7T.png');
+    background-size: contain;
+}
+
+#satellite4 {
+    top: calc(55% - 100px);
+    left: calc(110% - 60px);
+    background-image: url('https://i.imgur.com/J6LLKxB.png');
+    background-size: contain;
+}
+
+#satellite5 {
+    top: calc(100% - 100px);
+    left: calc(100% - 60px);
+    background-image: url('https://i.imgur.com/k9Hs8jo.png');
+    background-size: contain;
+}
+
+#satellite6 {
+    top: calc(10% - 100px);
+    left: calc(95% - 60px);
+    background-image: url('https://i.imgur.com/PTmyIvP.png');
+    background-size: contain;
+}
+
+#satellite7 {
+    top: calc(100% - 100px);
+    left: calc(0% - 60px);
+    background-image: url('https://i.imgur.com/a9VXGjJ.png');
+    background-size: contain;
+}
+
+#satellite8 {
+    top: calc(10% - 100px);
+    left: calc(0% - 60px);
+    background-image: url('https://i.imgur.com/QM6STRo.png');
+    background-size: contain;
+}
+
+.satellite-label {
+    visibility: visible;
+    position: absolute;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    left: 50%;
+    transform: translateX(-50%);
+    text-shadow: 1px 1px 2px #85a0ff, 2px 2px 2px #9d00ff, 3px 3px 2px #FFC107;
+    color: white;
+    margin-top: 90px;
+}
+
+.satellite:hover .satellite-label {
+    visibility: visible;
+}
+
+.buttons-container {
+    position: fixed;
+
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    z-index: 9999;
+}
+
+.button {
+    width: 50px;
+    height: 100px;
+    background-size: 50px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    background-repeat: no-repeat;
+}
+
+.button-buttons {
+    position: relative;
+    width: 50px;
+    /* Ajusta el ancho del botón según tus necesidades */
+    height: 100px;
+    /* Ajusta la altura del botón según tus necesidades */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.button-buttons:hover {
+    transform: scale(1.1);
+}
+
+.button:hover {
+    transform: scale(1.1);
+}
+
+/* Media queries for mobile devices */
+@media (max-width: 768px) {
+    .planet {
+        width: 300px;
+        height: 300px;
+        z-index: 1;
+    }
+
+    #earth {
+        width: 60%;
+        height: 60%;
+    }
+
+    .satellite {
+        width: 90px;
+        height: 150px;
+    }
+
+    .satellite-label {
+        font-size: 14px;
+        margin-top: 70px;
+    }
+
+    #satellite1 {
+        top: calc(15% - 100px);
+        left: calc(50% - 50px);
+    }
+
+    #satellite2 {
+        top: calc(55% - 100px);
+        left: calc(10% - 60px);
+    }
+
+    #satellite3 {
+        top: calc(110% - 100px);
+        left: calc(50% - 50px);
+    }
+
+    #satellite4 {
+        top: calc(55% - 100px);
+        left: calc(100% - 60px);
+    }
+
+    #satellite5 {
+        top: calc(100% - 100px);
+        left: calc(90% - 60px);
+    }
+
+    #satellite6 {
+        top: calc(15% - 100px);
+        left: calc(90% - 60px);
+    }
+
+    #satellite7 {
+        top: calc(100% - 100px);
+        left: calc(15% - 60px);
+    }
+
+    #satellite8 {
+        top: calc(15% - 100px);
+        left: calc(15% - 60px);
+    }
+
+    .buttons-container {
+        bottom: 5px;
+        right: 50%;
+        transform: translateX(50%);
+        flex-direction: row;
+        justify-content: center;
+        width: 100%;
+        gap: 30px;
+    }
+
+    .button {
+        width: 40px;
+        height: 80px;
+        background-size: contain;
+        margin: 15px;
+    }
+}

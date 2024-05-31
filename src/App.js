@@ -1,21 +1,28 @@
 
 import './App.css';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Menu from './Componentes/Menu';
-import FreeVersion from './Componentes/FreeVersion';
-import NotFound from './Componentes/NotFound';
+import MissionMenu from './Componentes/MissionMenu';
+//import MissionGame from './Componentes/Js/MissionGame';
+import PlanetApp from './Componentes/PlanetApp';
+import NotFound from './Componentes/Js/NotFound';
+import NpcMarketplace from './Componentes/NpcMarketplace';
+const MissionGame = lazy(() => import('./Componentes/Js/MissionGame'));
 
 function App() {
   return (
-    <>
-      
-        <Routes>
-          <Route path='/' element={<Menu />} />
-          <Route path='/free-version' element={<FreeVersion />} />
-          <Route path='*' element={<NotFound />}/>
-        </Routes>
-      
-    </>
+    <BrowserRouter>
+      <Suspense fallback={<div>Loading...</div>}>
+      <Routes>
+        <Route path="/" element={<PlanetApp />} />
+        <Route path="/MissionMenu" element={<MissionMenu />} />
+        <Route path='/MissionGame' element={<MissionGame />} />
+        <Route path='/NpcMarketplace' element={<NpcMarketplace />} />
+        {/* Otras rutas */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Suspense>
+    </BrowserRouter >
   );
 }
 
