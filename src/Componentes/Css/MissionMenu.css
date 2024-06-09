@@ -226,6 +226,7 @@ html {
     background: url(https://i.imgur.com/RQNSpxq.png);
     background-position: center;
     text-shadow: -1px 1px 0px black;
+    font-size: 20px;
 }
 
 .button-menu:hover {
@@ -235,6 +236,36 @@ html {
     /* Asegura que el cursor siga siendo una mano */
 }
 
+.button-menu.disabled {
+    cursor: not-allowed;
+    /* otros estilos de botón deshabilitado */
+  }
+
+.coming-soon {
+    position: absolute;
+    top: 20%;
+    left: 10%;
+    width: 100px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(231, 6, 6, 0.781);
+    /* Fondo oscuro semitransparente */
+    color: white;
+    /* Texto blanco */
+    font-size: 11px;
+    /* Ajusta el tamaño del texto según tus necesidades */
+    font-weight: bold;
+    /* Texto en negrita */
+    text-align: center;
+    z-index: 1;
+    /* Asegura que esté por encima de otros elementos */
+    pointer-events: none;
+    /* Permite hacer clic a través del cartel */
+    border-radius: 5px;
+    /* Añade bordes redondeados si es necesario */
+}
 
 /* Responsive adjustments */
 @media (max-width: 768px) {

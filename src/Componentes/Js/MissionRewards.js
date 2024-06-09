@@ -310,7 +310,6 @@ function getRandomReward(distribution) {
     return userRewards.length > 0 ? userRewards : null;
 }
 
-
 export function generateCritterReward(duration) {
     const critterDistribution = getCritterDistribution(duration);
     return getRandomReward(critterDistribution);
@@ -338,7 +337,7 @@ export function generateCoinReward(duration) {
 export function getCritterDistribution(duration) {
     // Distribución de criaturas según la duración de la misión
     switch (duration) {
-        case 20: // Flash Missions (15 minutos)
+        case 3600: // 1 hora
             return {
                 "Gato Noir Critter": 5,
                 "Spark Gray Critter": 5,
@@ -350,7 +349,7 @@ export function getCritterDistribution(duration) {
                 "Metallic Blaze Critter": 5,
                 "Skull Blaze Critter": 5
             };
-        case 1800: // Short Missions (30 minutos)
+        case 7200: // 2 horas
             return {
                 "Gato Noir Critter": 7.5,
                 "Spark Gray Critter": 7.5,
@@ -362,7 +361,7 @@ export function getCritterDistribution(duration) {
                 "Metallic Blaze Critter": 7.5,
                 "Skull Blaze Critter": 7.5
             };
-        case 3600: // Moderate Missions (60 minutos)
+        case 14400: // 4 horas
             return {
                 "Gato Noir Critter": 11.3,
                 "Spark Gray Critter": 11.3,
@@ -374,7 +373,7 @@ export function getCritterDistribution(duration) {
                 "Metallic Blaze Critter": 11.3,
                 "Skull Blaze Critter": 11.3
             };
-        case 7200: // Long Missions (2 horas)
+        case 28800: // 8 horas
             return {
                 "Gato Noir Critter": 16.9,
                 "Spark Gray Critter": 16.9,
@@ -386,17 +385,17 @@ export function getCritterDistribution(duration) {
                 "Metallic Blaze Critter": 16.9,
                 "Skull Blaze Critter": 16.9,
 
-                "Abyssal Serpent Critter": 5,
-                "Sharkcoil Serpent Critter": 5,
-                "Napalm Serpent Critterr": 5,
-                "BotPod Joy Critter": 5,
-                "Infernal Bot Critter": 5,
-                "Bad Bot Cripper": 5,
-                "Error 404 Critter": 5,
-                "Diablotronic Chaos Critter": 5,
-                "Celestial Particle Critter": 5
+                "Abyssal Serpent Critter": 3.3,
+                "Sharkcoil Serpent Critter": 3.3,
+                "Napalm Serpent Critterr": 3.3,
+                "BotPod Joy Critter": 3.3,
+                "Infernal Bot Critter": 3.3,
+                "Bad Bot Cripper": 3.3,
+                "Error 404 Critter": 3.3,
+                "Diablotronic Chaos Critter": 3.3,
+                "Celestial Particle Critter": 3.3
             };
-        case 14400: // Extensive Missions (4 horas)
+        case 57600: // 16 horas
             return {
                 "Gato Noir Critter": 25.3,
                 "Spark Gray Critter": 25.3,
@@ -408,32 +407,32 @@ export function getCritterDistribution(duration) {
                 "Metallic Blaze Critter": 25.3,
                 "Skull Blaze Critter": 25.3,
 
-                "Abyssal Serpent Critter": 7.5,
-                "Sharkcoil Serpent Critter": 7.5,
-                "Napalm Serpent Critterr": 7.5,
-                "BotPod Joy Critter": 7.5,
-                "Infernal Bot Critter": 7.5,
-                "Bad Bot Cripper": 7.5,
-                "Error 404 Critter": 7.5,
-                "Diablotronic Chaos Critter": 7.5,
-                "Celestial Particle Critter": 7.5,
+                "Abyssal Serpent Critter": 5,
+                "Sharkcoil Serpent Critter": 5,
+                "Napalm Serpent Critterr": 5,
+                "BotPod Joy Critter": 5,
+                "Infernal Bot Critter": 5,
+                "Bad Bot Cripper": 5,
+                "Error 404 Critter": 5,
+                "Diablotronic Chaos Critter": 5,
+                "Celestial Particle Critter": 5,
 
-                "Cosmic Tentacle Critter": 5,
-                "Red Cosmic Tentacle Critter": 5,
-                "Green Cosmic Tentacle Critter": 5,
-                "Silver Demon Critter": 5,
-                "Diablo Visage Critter": 5,
-                "Infernal Pizza Critter": 5,
-                "Noble Pizza Critter": 5,
-                "Golden Eye Pizza": 5,
-                "Pizza from the Caves": 5,
-                "Zombie Rotten Pizza": 5,
-                "Infected Mutant Pizza": 5,
-                "Angry Pizza Critter": 5,
-                "Red Hot Chilli Pizza": 5
+                "Cosmic Tentacle Critter": 2.2,
+                "Red Cosmic Tentacle Critter": 2.2,
+                "Green Cosmic Tentacle Critter": 2.2,
+                "Silver Demon Critter": 2.2,
+                "Diablo Visage Critter": 2.2,
+                "Infernal Pizza Critter": 2.2,
+                "Noble Pizza Critter": 2.2,
+                "Golden Eye Pizza": 2.2,
+                "Pizza from the Caves": 2.2,
+                "Zombie Rotten Pizza": 2.2,
+                "Infected Mutant Pizza": 2.2,
+                "Angry Pizza Critter": 2.2,
+                "Red Hot Chilli Pizza": 2.2
 
             };
-        case 28800: // Exhaustive Missions (8 horas)
+        case 115200: // 32 horas
             return {
                 "Gato Noir Critter": 38,
                 "Spark Gray Critter": 38,
@@ -445,72 +444,29 @@ export function getCritterDistribution(duration) {
                 "Metallic Blaze Critter": 38,
                 "Skull Blaze Critter": 38,
 
-                "Abyssal Serpent Critter": 11.3,
-                "Sharkcoil Serpent Critter": 11.3,
-                "Napalm Serpent Critterr": 11.3,
-                "BotPod Joy Critter": 11.3,
-                "Infernal Bot Critter": 11.3,
-                "Bad Bot Cripper": 11.3,
-                "Error 404 Critter": 11.3,
-                "Diablotronic Chaos Critter": 11.3,
-                "Celestial Particle Critter": 11.3,
+                "Abyssal Serpent Critter": 7.5,
+                "Sharkcoil Serpent Critter": 7.5,
+                "Napalm Serpent Critterr": 7.5,
+                "BotPod Joy Critter": 7.5,
+                "Infernal Bot Critter": 7.5,
+                "Bad Bot Cripper": 7.5,
+                "Error 404 Critter": 7.5,
+                "Diablotronic Chaos Critter": 7.5,
+                "Celestial Particle Critter": 7.5,
 
-                "Cosmic Tentacle Critter": 7.5,
-                "Red Cosmic Tentacle Critter": 7.5,
-                "Green Cosmic Tentacle Critter": 7.5,
-                "Silver Demon Critter": 7.5,
-                "Diablo Visage Critter": 7.5,
-                "Infernal Pizza Critter": 7.5,
-                "Noble Pizza Critter": 7.5,
-                "Golden Eye Pizza": 7.5,
-                "Pizza from the Caves": 7.5,
-                "Zombie Rotten Pizza": 7.5,
-                "Infected Mutant Pizza": 7.5,
-                "Angry Pizza Critter": 7.5,
-                "Red Hot Chilli Pizza": 7.5,
-
-                "Particle Cosmic Tentacle": 0.2,
-                "Cosmic Demon Elite Critter": 0.2,
-                "Furious Demon Elite Critter": 0.2,
-                "Demon Lord Critter": 0.2,
-                "Monster Pizza Roulette": 0.2
-
-            };
-        case 57600: // Elite Missions (16 horas)
-            return {
-                "Gato Noir Critter": 57,
-                "Spark Gray Critter": 57,
-                "Gato Inferno Critter": 57,
-                "Bloodie Cat Critter": 57,
-                "Lunar Gaze Critter": 57,
-                "Astro Folly Criter": 57,
-                "Troll Moon Critter": 57,
-                "Metallic Blaze Critter": 57,
-                "Skull Blaze Critter": 57,
-
-                "Abyssal Serpent Critter": 16.9,
-                "Sharkcoil Serpent Critter": 16.9,
-                "Napalm Serpent Critterr": 16.9,
-                "BotPod Joy Critter": 16.9,
-                "Infernal Bot Critter": 16.9,
-                "Bad Bot Cripper": 16.9,
-                "Error 404 Critter": 16.9,
-                "Diablotronic Chaos Critter": 16.9,
-                "Celestial Particle Critter": 16.9,
-
-                "Cosmic Tentacle Critter": 11.3,
-                "Red Cosmic Tentacle Critter": 11.3,
-                "Green Cosmic Tentacle Critter": 11.3,
-                "Silver Demon Critter": 11.3,
-                "Diablo Visage Critter": 11.3,
-                "Infernal Pizza Critter": 11.3,
-                "Noble Pizza Critter": 11.3,
-                "Golden Eye Pizza": 11.3,
-                "Pizza from the Caves": 11.3,
-                "Zombie Rotten Pizza": 11.3,
-                "Infected Mutant Pizza": 11.3,
-                "Angry Pizza Critter": 11.3,
-                "Red Hot Chilli Pizza": 11.3,
+                "Cosmic Tentacle Critter": 3.3,
+                "Red Cosmic Tentacle Critter": 3.3,
+                "Green Cosmic Tentacle Critter": 3.3,
+                "Silver Demon Critter": 3.3,
+                "Diablo Visage Critter": 3.3,
+                "Infernal Pizza Critter": 3.3,
+                "Noble Pizza Critter": 3.3,
+                "Golden Eye Pizza": 3.3,
+                "Pizza from the Caves": 3.3,
+                "Zombie Rotten Pizza": 3.3,
+                "Infected Mutant Pizza": 3.3,
+                "Angry Pizza Critter": 3.3,
+                "Red Hot Chilli Pizza": 3.3,
 
                 "Particle Cosmic Tentacle": 0.3,
                 "Cosmic Demon Elite Critter": 0.3,
@@ -527,47 +483,64 @@ export function getCritterDistribution(duration) {
 export function getGemDistribution(duration) {
     // Distribución de gemas según la duración de la misión
     switch (duration) {
-        case 20: // Flash Missions (15 minutos)
+        case 3600: // 1 hora
             return {
                 "Ambar Ore": 5,
                 "Jade Ore": 5,
                 "Pearl Ore": 5,
                 "Turquoise Ore": 5
             };
-        case 1800: // Short Missions (30 minutos)
+        case 7200: // 2 horas
             return {
                 "Ambar Ore": 7.5,
                 "Jade Ore": 7.5,
                 "Pearl Ore": 7.5,
                 "Turquoise Ore": 7.5
             };
-        case 3600: // Moderate Missions (60 minutos)
+        case 14400: // 4 horas
             return {
                 "Ambar Ore": 11.3,
                 "Jade Ore": 11.3,
                 "Pearl Ore": 11.3,
                 "Turquoise Ore": 11.3
             };
-        case 7200: // Long Missions (2 horas)
+        case 28800: // 8 horas
             return {
                 "Ambar Ore": 16.9,
                 "Jade Ore": 16.9,
                 "Pearl Ore": 16.9,
                 "Turquoise Ore": 16.9,
 
-                "Amethyst Ore": 5,
-                "Diamond Ore": 5,
-                "Opal Ore": 5,
-                "Ruby Ore": 5,
-                "Topaz Ore": 5,
-                "Sapphire Ore": 5
+                "Amethyst Ore": 3.3,
+                "Diamond Ore": 3.3,
+                "Opal Ore": 3.3,
+                "Ruby Ore": 3.3,
+                "Topaz Ore": 3.3,
+                "Sapphire Ore": 3.3
             };
-        case 14400: // Extensive Missions (4 horas)
+        case 57600: // 16 horas
             return {
                 "Ambar Ore": 25.3,
                 "Jade Ore": 25.3,
                 "Pearl Ore": 25.3,
                 "Turquoise Ore": 25.3,
+
+                "Amethyst Ore": 5,
+                "Diamond Ore": 5,
+                "Opal Ore": 5,
+                "Ruby Ore": 5,
+                "Topaz Ore": 5,
+                "Sapphire Ore": 5,
+
+                "Black Diamond Ore": 2.2,
+                "Star Ruby Ore": 2.2
+            };
+        case 115200: // 32 horas
+            return {
+                "Ambar Ore": 38,
+                "Jade Ore": 38,
+                "Pearl Ore": 38,
+                "Turquoise Ore": 38,
 
                 "Amethyst Ore": 7.5,
                 "Diamond Ore": 7.5,
@@ -576,45 +549,8 @@ export function getGemDistribution(duration) {
                 "Topaz Ore": 7.5,
                 "Sapphire Ore": 7.5,
 
-                "Black Diamond Ore": 5,
-                "Star Ruby Ore": 5
-            };
-        case 28800: // Exhaustive Missions (8 horas)
-            return {
-                "Ambar Ore": 38,
-                "Jade Ore": 38,
-                "Pearl Ore": 38,
-                "Turquoise Ore": 38,
-
-                "Amethyst Ore": 11.3,
-                "Diamond Ore": 11.3,
-                "Opal Ore": 11.3,
-                "Ruby Ore": 11.3,
-                "Topaz Ore": 11.3,
-                "Sapphire Ore": 11.3,
-
-                "Black Diamond Ore": 7.5,
-                "Star Ruby Ore": 7.5,
-
-                "Nanodiamond Ore": 0.2,
-                "Peridotos Ore": 0.2
-            };
-        case 57600: // Elite Missions (16 horas)
-            return {
-                "Ambar Ore": 57,
-                "Jade Ore": 57,
-                "Pearl Ore": 57,
-                "Turquoise Ore": 57,
-
-                "Amethyst Ore": 16.9,
-                "Diamond Ore": 16.9,
-                "Opal Ore": 16.9,
-                "Ruby Ore": 16.9,
-                "Topaz Ore": 16.9,
-                "Sapphire Ore": 16.9,
-
-                "Black Diamond Ore": 11.3,
-                "Star Ruby Ore": 11.3,
+                "Black Diamond Ore": 3.3,
+                "Star Ruby Ore": 3.3,
 
                 "Nanodiamond Ore": 0.3,
                 "Peridotos Ore": 0.3
@@ -627,65 +563,52 @@ export function getGemDistribution(duration) {
 export function getCubesDistribution(duration) {
     // Distribución de Cubes según la duración de la misión
     switch (duration) {
-        case 20: // Flash Missions (15 minutos)
+        case 3600: // 1 hora
             return {
                 "Iron Cube": 5,
                 "Copper Cube": 5
             };
-        case 1800: // Short Missions (30 minutos)
+        case 7200: // 2 horas
             return {
                 "Iron Cube": 7.5,
                 "Copper Cube": 7.5
             };
-        case 3600: // Moderate Missions (60 minutos)
+        case 14400: // 4 horas
             return {
                 "Iron Cube": 11.3,
                 "Copper Cube": 11.3
             };
-        case 7200: // Long Missions (2 horas)
+        case 28800: // 8 horas
             return {
                 "Iron Cube": 16.9,
                 "Copper Cube": 16.9,
 
-                "Earth Cube": 5,
-                "Fire Cube": 5,
-                "Ice Cube": 5
+                "Earth Cube": 3.3,
+                "Fire Cube": 3.3,
+                "Ice Cube": 3.3
 
             };
-        case 14400: // Extensive Missions (4 horas)
+        case 57600: // 16 horas
             return {
                 "Iron Cube": 25.3,
                 "Copper Cube": 25.3,
+
+                "Earth Cube": 5,
+                "Fire Cube": 5,
+                "Ice Cube": 5,
+
+                "Golden Cube": 2.2
+            };
+        case 115200: // 32 horas
+            return {
+                "Iron Cube": 38,
+                "Copper Cube": 38,
 
                 "Earth Cube": 7.5,
                 "Fire Cube": 7.5,
                 "Ice Cube": 7.5,
 
-                "Golden Cube": 5
-            };
-        case 28800: // Exhaustive Missions (8 horas)
-            return {
-                "Iron Cube": 38,
-                "Copper Cube": 38,
-
-                "Earth Cube": 11.3,
-                "Fire Cube": 11.3,
-                "Ice Cube": 11.3,
-
-                "Golden Cube": 7.5,
-
-                "Elemental Energy Cube": 0.2
-            };
-        case 57600: // Elite Missions (16 horas)
-            return {
-                "Iron Cube": 57,
-                "Copper Cube": 57,
-
-                "Earth Cube": 16.9,
-                "Fire Cube": 16.9,
-                "Ice Cube": 16.9,
-
-                "Golden Cube": 11.3,
+                "Golden Cube": 3.3,
 
                 "Elemental Energy Cube": 0.3
             };
@@ -698,33 +621,29 @@ export function getCubesDistribution(duration) {
 export function getCoinsDistribution(duration) {
     // Distribución de Coins según la duración de la misión
     switch (duration) {
-        case 20: // Flash Missions (15 minutos)
+        case 3600: // 1 hora
             return {
                 value: 1
             };
-        case 1800: // Short Missions (30 minutos)
+        case 7200: // 2 horas
             return {
                 value: 2
             };
-        case 3600: // Moderate Missions (60 minutos)
+        case 14400: // 4 horas
             return {
                 value: 4
             };
-        case 7200: // Long Missions (2 horas)
+        case 28800: // 8 horas
             return {
                 value: 8
             };
-        case 14400: // Extensive Missions (4 horas)
+        case 57600: // 16 horas
             return {
                 value: 16
             };
-        case 28800: // Exhaustive Missions (8 horas)
+        case 115200: // 32 horas
             return {
                 value: 32
-            };
-        case 57600: // Elite Missions (16 horas)
-            return {
-                value: 64
             };
         default:
             return {

@@ -64,6 +64,10 @@ canvas {
     /* Añade bordes redondeados si es necesario */
 }
 
+.disabled:hover {
+    cursor: not-allowed;
+  }
+
 .yellow {
     background: rgba(175, 172, 7, 0.925);
     /* Fondo oscuro semitransparente */

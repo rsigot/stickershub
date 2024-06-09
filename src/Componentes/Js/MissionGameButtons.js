@@ -4,12 +4,12 @@ import React, { startTransition } from 'react';
 
 // parámetros de las misiones: duración en segundos , nombre.
 const missions = [
-  [20, "Flash"],
-  [1800, "Short"],
-  [3600, "Moderate"],
-  [7200, "Long"],
-  [14400, "Extensive"],
-  [28800, "Elite"]
+  [3600, "Moon"], // 1 hora
+  [7200, "Mars"], // 2 horas
+  [14400, "Jupiter"], // 4 horas
+  [28800, "Alpha Centauri"], // 8 horas
+  [57600, "Andromeda Galaxy"], // 16 horas
+  [115200, "Deep Space"] // 32 horas
 ];
 
 export function MissionGameButtons({ userID }) {
@@ -33,16 +33,25 @@ export function MissionGameButtons({ userID }) {
   };
 
   return (
-    <div class="container-menu">
+    <div className="container-menu">
       <div className="grid">
         {missions.slice(0, 6).map((mission, index) => (
           <div className="grid-item" key={index}>
             <h2>{mission[1]} Mission</h2>
-            <h4>Possible Rewards: Max {mission[0] < 7200 ? 'Basic' : mission[0] < 14400 ? 'Rare' : mission[0] < 28800 ? 'Epic' : 'Legendary'}</h4>
-            <h4>Duration: {formatDuration(mission[0])}</h4>
-            <button className="button-menu" onClick={() => handleSelectMission(mission)}>
-              Launch Mission
-            </button>
+            <h3>Possible Rewards: Max {mission[0] < 7200 ? 'Basic' : mission[0] < 14400 ? 'Rare' : mission[0] < 28800 ? 'Epic' : 'Legendary'}</h3>
+            <h3>Duration: {formatDuration(mission[0])}</h3>
+            {mission[0] >= 28800 ? (
+              <>
+                <button className="button-menu disabled" disabled>
+                  Launch Mission 🚀
+                </button>
+                <div className="coming-soon">Coming Soon</div>
+              </>
+            ) : (
+              <button className="button-menu" onClick={() => handleSelectMission(mission)}>
+                Launch Mission 🚀
+              </button>
+            )}
           </div>
         ))}
       </div>
@@ -51,4 +60,3 @@ export function MissionGameButtons({ userID }) {
 }
 
 export default MissionGameButtons;
-

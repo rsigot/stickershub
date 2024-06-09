@@ -7,6 +7,7 @@ import MissionMenu from './Componentes/MissionMenu';
 import PlanetApp from './Componentes/PlanetApp';
 import NotFound from './Componentes/Js/NotFound';
 import NpcMarketplace from './Componentes/NpcMarketplace';
+import Dashboard from './Componentes/Dashboard';
 const MissionGame = lazy(() => import('./Componentes/Js/MissionGame'));
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         <Route path="/MissionMenu" element={<MissionMenu />} />
         <Route path='/MissionGame' element={<MissionGame />} />
         <Route path='/NpcMarketplace' element={<NpcMarketplace />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         {/* Otras rutas */}
         <Route path="*" element={<NotFound />} />
       </Routes>

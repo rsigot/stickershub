@@ -8,6 +8,13 @@ import MissionGameButtons from './Js/MissionGameButtons.js';
 
 // Función para verificar el estado de whitelist en Firestore
 async function checkWhitelistStatus(userID) {
+    const cacheKey = `whitelistStatus_${userID}`;
+    const cachedStatus = localStorage.getItem(cacheKey);
+
+    if (cachedStatus !== null) {
+        return JSON.parse(cachedStatus);
+    }
+
     try {
         console.log('Buscando usuario en la whitelist:', userID);
         const usersRef = collection(db, 'users');
@@ -20,6 +27,9 @@ async function checkWhitelistStatus(userID) {
 
             // Convertir el valor del campo whitelist a un booleano explícito
             const isWhitelisted = userData.whitelist === true;
+
+            // Guardar el estado de whitelist en localStorage
+            localStorage.setItem(cacheKey, JSON.stringify(isWhitelisted));
 
             if (isWhitelisted) {
                 console.log('Usuario en whitelist:', userID);
@@ -40,7 +50,7 @@ async function checkWhitelistStatus(userID) {
 
 export default function MissionMenu() {
     const [userID, setUserID] = useState(null);
-    const [showModal, setShowModal] = useState(false);
+    const [showBlacklistModal, setShowBlacklistModal] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -50,7 +60,7 @@ export default function MissionMenu() {
             checkWhitelistStatus(userID).then(isWhitelisted => {
                 if (!isWhitelisted) {
                     console.log('Usuario no está en whitelist. Mostrando modal.');
-                    setShowModal(true);
+                    setShowBlacklistModal(true); 
                 } else {
                     console.log('Usuario está en whitelist. Permitiendo acceso.');
                 }
@@ -58,30 +68,30 @@ export default function MissionMenu() {
         }
     }, [userID]);
 
-    const handleModalClose = () => {
-        setShowModal(false);
+    const handleBlacklistModalClose = () => {
+        setShowBlacklistModal(false);
         navigate('/');
     };
 
     return (
         <>
-        <div className="image"> 
-            {showModal && (
-                <div className="modal">
-                    <div className="modal-content">
-                        <p>You are on the blacklist!</p>
-                        <button onClick={handleModalClose}>Accept</button>
+            <div className="image">
+                {showBlacklistModal && (
+                    <div className="modal">
+                        <div className="modal-content">
+                            <p>You are on the blacklist!</p>
+                            <button onClick={handleBlacklistModalClose}>Accept</button>
+                        </div>
                     </div>
+                )}
+
+                <div className="login-container">
+                    <LoginUAL onLogin={setUserID} />
                 </div>
-            )}
 
-            <div className="login-container">
-                <LoginUAL onLogin={setUserID} />
-            </div>
-
-            <div>
-                <MissionGameButtons userID={userID} />
-            </div>
+                <div>
+                    <MissionGameButtons userID={userID} />
+                </div>
             </div>
         </>
     );

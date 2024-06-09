@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { UALContext } from 'ual-reactjs-renderer';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import './Css/LoginUAL.css';
-import { collection, addDoc, query, where, getDocs, updateDoc, onSnapshot, doc } from 'firebase/firestore';
+import { collection, query, where, getDocs, updateDoc, doc, getDoc } from 'firebase/firestore';
 import { db } from '../Firebase/firebase.js';
 import logo from '../Img/Logo-sh1-text.png';
 
@@ -36,7 +36,26 @@ async function checkWhitelistStatus(userWallet) {
     }
 }
 
-export function LoginUAL({ onLogin }) {
+// Función para obtener el balance de SHCoins del usuario
+async function getUserBalance(userWallet) {
+    try {
+        const userDocRef = doc(db, 'users', userWallet);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+            const userData = userDoc.data();
+            return userData.coins || 0;
+        } else {
+            console.error('No se encontró ningún documento para el usuario:', userWallet);
+            return 0;
+        }
+    } catch (error) {
+        console.error('Error getting user balance:', error);
+        return 0;
+    }
+}
+
+export function LoginUAL({ onLogin = () => {} }) { // Función por defecto
     const ual = useContext(UALContext);
     const [loggedIn, setLoggedIn] = useState(false);
     const [coins, setCoins] = useState(null); // Estado para almacenar el valor de coins
@@ -53,20 +72,17 @@ export function LoginUAL({ onLogin }) {
     }, [ual?.activeUser]);
 
     useEffect(() => {
-        // Verificar si hay un usuario activo antes de suscribirse al snapshot
         if (ual?.activeUser?.accountName) {
-            const userDocRef = doc(db, 'users', ual.activeUser.accountName);
-            const unsubscribe = onSnapshot(userDocRef, (docSnapshot) => {
-                if (docSnapshot.exists()) {
-                    const newData = docSnapshot.data();
-                    setCoins(newData.coins);
-                }
-            });
+            // Obtener y actualizar el balance del usuario cada vez que se renderiza el componente
+            const fetchUserBalance = async () => {
+                const userWallet = ual.activeUser.accountName;
+                const balance = await getUserBalance(userWallet);
+                setCoins(balance);
+            };
 
-            // Cleanup function para desuscribirse
-            return () => unsubscribe();
+            fetchUserBalance();
         }
-    }, [ual?.activeUser?.accountName]);
+    }, [ual?.activeUser]);
 
     const alta = async () => {
         try {
@@ -80,27 +96,22 @@ export function LoginUAL({ onLogin }) {
                 await updateDoc(userDoc.ref, { lastActive: new Date() });
                 console.log("Usuario ya existe, lastActive actualizado: " + userWallet);
 
-                // Obtener y almacenar el valor de coins
+                // Obtener y almacenar el valor de coins y whitelist
                 const userData = userDoc.data();
                 setCoins(userData.coins);
-
-                // Verificar el estado de whitelist
-                const isWhitelisted = await checkWhitelistStatus(userWallet);
-                setIsWhitelisted(isWhitelisted);
+                setIsWhitelisted(userData.whitelist === true);
             } else {
-                // Usuario no existe, crear nuevo documento con wallet, lastActive y coins
-                const newUserDoc = await addDoc(usersCol, {
+                // Usuario no existe, crear nuevo documento con wallet, lastActive, coins y whitelist
+                await addDoc(usersCol, {
                     wallet: userWallet,
                     lastActive: new Date(),
-                    coins: 0
+                    coins: 0,
+                    whitelist: false
                 });
                 console.log('Documento agregado correctamente: ' + userWallet);
                 setCoins(0); // Asignar 0 a coins para el nuevo usuario
+                setIsWhitelisted(false);
                 setShowMenu(true);
-
-                // Verificar el estado de whitelist
-                const isWhitelisted = await checkWhitelistStatus(userWallet);
-                setIsWhitelisted(isWhitelisted);
             }
             setLoggedIn(true);
             onLogin(userWallet);
@@ -141,7 +152,7 @@ export function LoginUAL({ onLogin }) {
                     <p className="walletspan">
                         Welcome: {ual.activeUser.accountName} <br /> {isWhitelisted && "(WHITELIST)"}
                         <br />
-                        Balance: {coins} <img className="coins" src="https://i.imgur.com/5MbUxQA.png" alt="Coins" />
+                        SHCOINS: {coins} <img className="coins" src="https://i.imgur.com/5MbUxQA.png" alt="Coins" />
                     </p>
                 </>
             ) : (

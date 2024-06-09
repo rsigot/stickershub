@@ -1,75 +1,81 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { collection, addDoc, doc, updateDoc, getDocs, getDoc, query, where } from 'firebase/firestore';
-import { db } from '../../Firebase/firebase.js';
 import LoginUAL from '../LoginUAL.jsx';
-import { generateCritterReward, generateGemReward, generateCubeReward, generateCoinReward, prize } from './MissionRewards.js';
-import { getCritterDistribution, getGemDistribution, getCubesDistribution, getCoinsDistribution } from './MissionRewards.js';
+import { getCritterDistribution, getGemDistribution, getCubesDistribution, getCoinsDistribution, prize } from './MissionRewards.js';
 import '../Css/MissionGame.css';
-import { nuevoMint } from './MissionGameMint.js';
+import {
+  handleLogin,
+  checkMissionStatus,
+  handleStartMission,
+  completeMission,
+  handleClaimRewards,
+  getMissionRanking,
+  findUserByWallet,
+  updateBalances,
+  recordTransaction,
+  updateUserCoins
+} from './MissionGameJS.js';
 
-const usersCol = collection(db, "users");
-const missionsCol = collection(db, "missions");
-
-const getMissionRanking = async (missionName) => {
-  const missionsCol = collection(db, 'missions');
-  const q = query(missionsCol, where('name', '==', missionName), where('status', '==', 'complete'));
-
-  const querySnapshot = await getDocs(q);
-  const missionCounts = {};
-
-  querySnapshot.forEach((doc) => {
-    const missionData = doc.data();
-    const userId = missionData.userId;
-
-    if (missionCounts[userId]) {
-      missionCounts[userId]++;
-    } else {
-      missionCounts[userId] = 1;
-    }
-  });
-
-  const sortedMissionCounts = Object.entries(missionCounts)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 3);
-
-  return sortedMissionCounts;
-};
-
-export default function MissionGame() {
+const MissionGame = () => {
   const { state } = useLocation();
   const [userID, setUserID] = useState(state?.userID || null);
   const [mission, setMission] = useState(state);
   const [missionStarted, setMissionStarted] = useState(false);
   const [rewards, setRewards] = useState([]);
-  const [coinReward, setCoinReward] = useState(0); // Almacenar la recompensa de Coins
+  const [coinReward, setCoinReward] = useState(0);
   const [rewardsVisible, setRewardsVisible] = useState(false);
   const [remainingTime, setRemainingTime] = useState(mission?.duration || 0);
   const [missionStatus, setMissionStatus] = useState('default');
   const [missionDocID, setMissionDocID] = useState(null);
   const [error, setError] = useState(null);
-  const [ranking, setRanking] = useState([]); // Estado para el ranking
+  const [ranking, setRanking] = useState([]);
   const navigate = useNavigate();
+  const [userExists, setUserExists] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const [botonDeshabilitado, setBotonDeshabilitado] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const initialRender = useRef(true); // Ref to track initial render
+  const [initialCheckDone, setInitialCheckDone] = useState(false); // State to track the initial check
 
   useEffect(() => {
-
-
-    
-    // Verifica el estado de la misión al cargar el componente
-    if (userID && mission) {
-      checkMissionStatus();
-    }
-
-    // Configura un intervalo para verificar el estado de la misión periódicamente
-    const interval = setInterval(() => {
-      if (userID && mission) {
-        checkMissionStatus();
+    async function fetchUserData() {
+      if (userID) {
+        console.log('Fetching user data...');
+        try {
+          const userDoc = await findUserByWallet(userID);
+          if (userDoc) {
+            const data = userDoc.data();
+            setUserData(data);
+            console.log('User data found and set:', data);
+          } else {
+            console.log('User data not found.');
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
       }
-    }, 1000); // 1000ms = 1seg
+    }
+    fetchUserData();
+  }, [userID]);
 
-    // Limpia el intervalo cuando el componente se desmonte
-    return () => clearInterval(interval);
-  }, [userID, mission]);
+  const handleTransaction = async (amount) => {
+    await updateBalances(userID, amount, userData, setUserData);
+  };
+
+  useEffect(() => {
+    if (!initialCheckDone && userID && mission) {
+      async function checkStatus() {
+        console.log('Checking mission status...');
+        await checkMissionStatus(userID, setMissionDocID, setRemainingTime, setMissionStarted, setMissionStatus, setMission, setError, navigate);
+      }
+      checkStatus();
+      setInitialCheckDone(true); // Mark the initial check as done
+    }
+  }, [initialCheckDone, userID, mission, navigate]); // Dependencies to ensure it runs only once when userID or mission changes
 
   useEffect(() => {
     let timerInterval;
@@ -81,7 +87,7 @@ export default function MissionGame() {
         setRemainingTime(timeLeft);
         if (timeLeft === 0) {
           clearInterval(timerInterval);
-          completeMission();
+          completeCurrentMission();
         }
       }, 1000);
     }
@@ -91,168 +97,47 @@ export default function MissionGame() {
 
   useEffect(() => {
     if (mission && mission.name) {
-      // Obtener el ranking de misiones completadas
-      getMissionRanking(mission.name).then(missionRanking => {
-        setRanking(missionRanking);
-      });
+      fetchBalanceAndRanking(); // Obtener balance y ranking solo al cargar la página o después de reclamar recompensas
     }
-  }, [mission]);
+  }, [mission?.name]); // Agregar esta dependencia para asegurarse de que se ejecute solo cuando el nombre de la misión cambie
 
-  const checkMissionStatus = async () => {
-    const q = query(missionsCol, where("userId", "==", userID), where("status", "==", "started"));
-    const querySnapshot = await getDocs(q);
-  
-    if (!querySnapshot.empty) {
-      const doc = querySnapshot.docs[0];
-      const missionData = doc.data();
-      const currentTime = new Date();
-      const endTime = missionData.endTime.toDate();
-      const timeLeft = Math.max(0, Math.floor((endTime - currentTime) / 1000));
-  
-      setMissionDocID(doc.id);
-      setRemainingTime(timeLeft);
-      setMissionStarted(true);
-      setMissionStatus('in-progress');
-      setMission(missionData); // Set the ongoing mission
-  
-      // Verificar si la sesión activa es la misma que la del navegador actual
-      if (missionData.activeSession !== navigator.userAgent) {
-        setError('La misión ya está en progreso en otro dispositivo o navegador.');
-        setTimeout(() => {
-          navigate('/MissionMenu');
-        }, 2000);
+  const fetchBalanceAndRanking = async () => {
+    // Obtener balance del usuario
+    if (userID) {
+      const userDoc = await findUserByWallet(userID);
+      if (userDoc) {
+        const data = userDoc.data();
+        setUserData(data);
       }
+    }
+
+    // Obtener ranking de misiones
+    if (mission && mission.name) {
+      console.log('Fetching mission ranking for:', mission.name);
+      const missionRanking = await getMissionRanking(mission.name);
+      console.log('Mission ranking fetched:', missionRanking);
+      setRanking(missionRanking);
     }
   };
-  
 
-  const handleStartMission = async () => {
-    const q = query(missionsCol, where("userId", "==", userID), where("status", "==", "started"));
-    const querySnapshot = await getDocs(q);
-  
-    if (!querySnapshot.empty) {
-      const ongoingMission = querySnapshot.docs[0].data();
-  
-      // Verificar si la misión está en progreso en otro dispositivo o navegador
-      if (ongoingMission.activeSession && ongoingMission.activeSession !== navigator.userAgent) {
-        setError('La misión ya está en progreso en otro dispositivo o navegador.');
-        setTimeout(() => {
-          navigate('/MissionMenu');
-        }, 2000);
-        return;
-      }
-    }
-  
-    setMissionStarted(true);
-    setMissionStatus('in-progress');
-  
-    const startTime = new Date();
-    const endTime = new Date(startTime.getTime() + mission.duration * 1000);
-  
-    try {
-      const docRef = await addDoc(missionsCol, {
-        userId: userID,
-        name: mission.name,
-        duration: mission.duration,
-        startTime: startTime,
-        endTime: endTime,
-        status: "started",
-        activeSession: navigator.userAgent // Establecer la sesión activa
-      });
-      setMissionDocID(docRef.id);
-      console.log("Mission started and saved to Firestore");
-    } catch (error) {
-      console.error("Error adding document: ", error);
-    }
+  const completeCurrentMission = () => {
+    completeMission(mission, missionDocID, setMissionStatus, setMissionStarted, setRewards, setCoinReward);
   };
-  
 
-  const completeMission = async () => {
-    setMissionStatus('complete');
-    setMissionStarted(false);
-
-    // Verificar si las recompensas ya existen en Firestore
-    const missionDocRef = doc(db, "missions", missionDocID);
-    const missionDoc = await getDoc(missionDocRef);
-    
-    if (missionDoc.exists() && missionDoc.data().rewards) {
-        // Leer las recompensas desde la base de datos
-        setRewards(missionDoc.data().rewards.nftRewards);
-        setCoinReward(missionDoc.data().rewards.coinReward || 0);
-        return;
+  const claimRewards = async () => {
+    console.log('Claiming rewards with missionDocID:', missionDocID, 'and userData:', userData);
+    if (!userData) {
+      alert("User data is not available. Please try again later.");
+      return;
     }
+    await handleClaimRewards(missionDocID, rewards, coinReward, userData, setUserData, setBotonDeshabilitado, handleCloseMissionComplete);
+    fetchBalanceAndRanking(); // Actualizar balance y ranking después de reclamar las recompensas
+    // Redirigir a la misma página para forzar una recarga
+    navigate(0);
+  };
 
-    // Generar las recompensas si no existen
-    const allRewards = [
-        generateCritterReward(mission.duration),
-        generateGemReward(mission.duration),
-        generateCubeReward(mission.duration),
-        generateCoinReward(mission.duration)
-    ].filter(reward => reward !== null && reward !== undefined);
-
-    const nftRewards = allRewards
-        .flatMap(rewards => {
-            if (Array.isArray(rewards)) {
-                return rewards.map(reward => {
-                    if (reward !== generateCoinReward(mission.duration)) {
-                        return {
-                            name: reward,
-                            image: prize[reward]?.imageURL || '',
-                            template: prize[reward]?.template,
-                            schema: prize[reward]?.schema,
-                        };
-                    } else {
-                        return null;
-                    }
-                });
-            } else {
-                return [];
-            }
-        })
-        .filter(reward => reward !== null);
-
-    const coinRewardValue = allRewards.find(reward => reward === generateCoinReward(mission.duration));
-
-    setRewards(nftRewards);
-    setCoinReward(coinRewardValue || 0);
-
-    try {
-        await updateDoc(missionDocRef, {
-            rewards: {
-                nftRewards,
-                coinReward: coinRewardValue || 0
-            },
-            status: "complete",
-            claimed: false, // Asegurarse de que el campo claimed esté presente
-            activeSession: navigator.userAgent // Agregar campo activeSession
-        });
-        console.log("Mission completed and rewards saved in Firestore");
-    } catch (error) {
-        console.error("Error updating document: ", error);
-    }
-};
-
-
-  const updateUserCoins = async (userId, coins) => {
-    const q = query(usersCol, where("wallet", "==", userId));
-    const querySnapshot = await getDocs(q);
-
-    if (!querySnapshot.empty) {
-      const userDoc = querySnapshot.docs[0];
-      const userDocRef = doc(db, "users", userDoc.id);
-
-      try {
-        await updateDoc(userDocRef, {
-          coins: userDoc.data().coins + coins
-        });
-        console.log(`User ${userId} has been awarded ${coins} coins`);
-        alert('You won ' + coins + ' coins!');
-      } catch (error) {
-        console.error("Error updating user's coins: ", error);
-      }
-    } else {
-      console.error("User not found");
-    }
+  const startMission = () => {
+    handleStartMission(userID, mission, setMissionStarted, setMissionStatus, setMissionDocID, setError, navigate);
   };
 
   const handleCloseMissionComplete = () => {
@@ -261,58 +146,9 @@ export default function MissionGame() {
     setRemainingTime(mission.duration);
   };
 
-  const [botonDeshabilitado, setBotonDeshabilitado] = useState(false);
-
-  const handleClaimRewards = async () => {
-    setBotonDeshabilitado(true); // Deshabilitar el botón al hacer clic
-
-    const missionDocRef = doc(db, "missions", missionDocID);
-    const missionDoc = await getDoc(missionDocRef);
-
-    if (!missionDoc.exists()) {
-      alert("Mission document does not exist.");
-      setBotonDeshabilitado(false);
-      return;
-    }
-
-    // Verificar si las recompensas ya fueron reclamadas
-    if (missionDoc.data().claimed) {
-      alert("Rewards have already been claimed.");
-      setBotonDeshabilitado(false);
-      return;
-    }
-
-    // Actualizar el campo claimed a true inmediatamente
-    try {
-      await updateDoc(missionDocRef, {
-        claimed: true
-      });
-    } catch (error) {
-      console.error("Error updating claimed status: ", error);
-      alert("Failed to claim rewards. Please try again.");
-      setBotonDeshabilitado(false);
-      return;
-    }
-
-    // Leer las recompensas desde la base de datos
-    const rewardsData = missionDoc.data().rewards;
-    const nftRewards = rewardsData.nftRewards;
-    const coinRewardValue = rewardsData.coinReward;
-
-    // Proceder con el minting y la actualización de monedas
-    if (nftRewards.length > 0) {
-      await nuevoMint(nftRewards, userID);
-    }
-    if (coinRewardValue > 0) {
-      await updateUserCoins(userID, coinRewardValue);
-    }
-
-    console.log("Rewards claimed and updated in Firestore");
-
-    handleCloseMissionComplete();
-    setBotonDeshabilitado(false); // Volver a habilitar el botón después de completar la operación
-  };
-
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
@@ -326,7 +162,7 @@ export default function MissionGame() {
           <div className={`mission-details ${missionStatus === 'complete' ? 'hidden' : ''}`}>
             <button
               className={`start-mission-button ${missionStarted ? 'pressed' : ''}`}
-              onClick={handleStartMission}
+              onClick={startMission}
               disabled={missionStarted}
             >
               Start {mission.name} Mission Now!
@@ -387,7 +223,7 @@ export default function MissionGame() {
         )}
         {ranking.length > 0 && (
           <div className="ranking-container">
-            <h3>{mission.name} Mission Top 3 </h3>
+            <h3>{mission.name} Mission Top 3</h3>
             <ul className="ranking-list">
               {ranking.map(([wallet, count], index) => (
                 <li key={index} className="ranking-item">
@@ -398,6 +234,7 @@ export default function MissionGame() {
             </ul>
           </div>
         )}
+
         {missionStatus === 'complete' && (
           <div className="mission-complete">
             <h3>Mission Complete! Rewards:</h3>
@@ -415,7 +252,7 @@ export default function MissionGame() {
                 </li>
               )}
             </ul>
-            <button onClick={handleClaimRewards} disabled={botonDeshabilitado} className='claim-button'>CLAIM REWARDS NOW!</button>
+            <button onClick={claimRewards} disabled={botonDeshabilitado} className='claim-button'>CLAIM REWARDS NOW!</button>
             <br />
             <button onClick={handleCloseMissionComplete} className='close-rewards-button'>CLOSE & REJECT REWARDS</button>
             <br />
@@ -429,4 +266,6 @@ export default function MissionGame() {
       </div>
     </>
   );
-}
+};
+
+export default MissionGame;
