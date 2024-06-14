@@ -1,4 +1,12 @@
 
+// Duraciones de misiones en segundos
+const DURATION_1H = 10;         // Moon 45 minutos  2700
+const DURATION_2H = 11;         // Mars 90 minutos  5400
+const DURATION_4H = 12;         // Jupiter 3 horas  10800
+const DURATION_8H = 21600;      // Alpha Centauri  6 horas  21600
+const DURATION_16H = 43200;     // Andromeda Galaxy  12 horas  43200
+const DURATION_32H = 86400;     // Deep Space 24 horas  86400
+
 // Inventario de Premios Disponibles
 
 export const prize = {
@@ -327,17 +335,15 @@ export function generateCubeReward(duration) {
 
 export function generateCoinReward(duration) {
     const coinDistribution = getCoinsDistribution(duration);
-    console.log("Coins: " + coinDistribution.value);
+    //console.log("Coins: " + coinDistribution.value);
     return coinDistribution.value;
 }
-
 
 // Definición de Probabilidades
 
 export function getCritterDistribution(duration) {
-    // Distribución de criaturas según la duración de la misión
     switch (duration) {
-        case 3600: // 1 hora
+        case DURATION_1H:
             return {
                 "Gato Noir Critter": 5,
                 "Spark Gray Critter": 5,
@@ -349,7 +355,7 @@ export function getCritterDistribution(duration) {
                 "Metallic Blaze Critter": 5,
                 "Skull Blaze Critter": 5
             };
-        case 7200: // 2 horas
+        case DURATION_2H:
             return {
                 "Gato Noir Critter": 7.5,
                 "Spark Gray Critter": 7.5,
@@ -361,7 +367,7 @@ export function getCritterDistribution(duration) {
                 "Metallic Blaze Critter": 7.5,
                 "Skull Blaze Critter": 7.5
             };
-        case 14400: // 4 horas
+        case DURATION_4H:
             return {
                 "Gato Noir Critter": 11.3,
                 "Spark Gray Critter": 11.3,
@@ -373,7 +379,7 @@ export function getCritterDistribution(duration) {
                 "Metallic Blaze Critter": 11.3,
                 "Skull Blaze Critter": 11.3
             };
-        case 28800: // 8 horas
+        case DURATION_8H:
             return {
                 "Gato Noir Critter": 16.9,
                 "Spark Gray Critter": 16.9,
@@ -395,7 +401,7 @@ export function getCritterDistribution(duration) {
                 "Diablotronic Chaos Critter": 3.3,
                 "Celestial Particle Critter": 3.3
             };
-        case 57600: // 16 horas
+        case DURATION_16H:
             return {
                 "Gato Noir Critter": 25.3,
                 "Spark Gray Critter": 25.3,
@@ -432,7 +438,7 @@ export function getCritterDistribution(duration) {
                 "Red Hot Chilli Pizza": 2.2
 
             };
-        case 115200: // 32 horas
+        case DURATION_32H:
             return {
                 "Gato Noir Critter": 38,
                 "Spark Gray Critter": 38,
@@ -477,34 +483,33 @@ export function getCritterDistribution(duration) {
         default:
             return {};
     }
-
 }
 
 export function getGemDistribution(duration) {
     // Distribución de gemas según la duración de la misión
     switch (duration) {
-        case 3600: // 1 hora
+        case DURATION_1H: // 45 minutos  2700
             return {
                 "Ambar Ore": 5,
                 "Jade Ore": 5,
                 "Pearl Ore": 5,
                 "Turquoise Ore": 5
             };
-        case 7200: // 2 horas
+        case DURATION_2H: // 90 minutos
             return {
                 "Ambar Ore": 7.5,
                 "Jade Ore": 7.5,
                 "Pearl Ore": 7.5,
                 "Turquoise Ore": 7.5
             };
-        case 14400: // 4 horas
+        case DURATION_4H: // 3 horas
             return {
                 "Ambar Ore": 11.3,
                 "Jade Ore": 11.3,
                 "Pearl Ore": 11.3,
                 "Turquoise Ore": 11.3
             };
-        case 28800: // 8 horas
+        case DURATION_8H: // 6 horas
             return {
                 "Ambar Ore": 16.9,
                 "Jade Ore": 16.9,
@@ -518,7 +523,7 @@ export function getGemDistribution(duration) {
                 "Topaz Ore": 3.3,
                 "Sapphire Ore": 3.3
             };
-        case 57600: // 16 horas
+        case DURATION_16H: // 12 horas
             return {
                 "Ambar Ore": 25.3,
                 "Jade Ore": 25.3,
@@ -535,7 +540,7 @@ export function getGemDistribution(duration) {
                 "Black Diamond Ore": 2.2,
                 "Star Ruby Ore": 2.2
             };
-        case 115200: // 32 horas
+        case DURATION_32H: // 24 horas
             return {
                 "Ambar Ore": 38,
                 "Jade Ore": 38,
@@ -563,22 +568,22 @@ export function getGemDistribution(duration) {
 export function getCubesDistribution(duration) {
     // Distribución de Cubes según la duración de la misión
     switch (duration) {
-        case 3600: // 1 hora
+        case DURATION_1H: // 45 minutos 2700
             return {
                 "Iron Cube": 5,
                 "Copper Cube": 5
             };
-        case 7200: // 2 horas
+        case DURATION_2H: // 90 minutos
             return {
                 "Iron Cube": 7.5,
                 "Copper Cube": 7.5
             };
-        case 14400: // 4 horas
+        case DURATION_4H: // 3 horas
             return {
                 "Iron Cube": 11.3,
                 "Copper Cube": 11.3
             };
-        case 28800: // 8 horas
+        case DURATION_8H: // 6 horas
             return {
                 "Iron Cube": 16.9,
                 "Copper Cube": 16.9,
@@ -588,7 +593,7 @@ export function getCubesDistribution(duration) {
                 "Ice Cube": 3.3
 
             };
-        case 57600: // 16 horas
+        case DURATION_16H: // 12 horas
             return {
                 "Iron Cube": 25.3,
                 "Copper Cube": 25.3,
@@ -599,7 +604,7 @@ export function getCubesDistribution(duration) {
 
                 "Golden Cube": 2.2
             };
-        case 115200: // 32 horas
+        case DURATION_32H: // 24 horas
             return {
                 "Iron Cube": 38,
                 "Copper Cube": 38,
@@ -621,27 +626,27 @@ export function getCubesDistribution(duration) {
 export function getCoinsDistribution(duration) {
     // Distribución de Coins según la duración de la misión
     switch (duration) {
-        case 3600: // 1 hora
+        case DURATION_1H: // 45 minutos  2700
             return {
                 value: 1
             };
-        case 7200: // 2 horas
+        case DURATION_2H: // 90 minutos
             return {
                 value: 2
             };
-        case 14400: // 4 horas
+        case DURATION_4H: // 3 horas
             return {
                 value: 4
             };
-        case 28800: // 8 horas
+        case DURATION_8H: // 6 horas
             return {
                 value: 8
             };
-        case 57600: // 16 horas
+        case DURATION_16H: // 12 horas
             return {
                 value: 16
             };
-        case 115200: // 32 horas
+        case DURATION_32H: // 24 horas
             return {
                 value: 32
             };

@@ -1,20 +1,40 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import LoginUAL from '../LoginUAL.jsx';
+import { LoginUAL } from '../LoginUAL.jsx';
 import { getCritterDistribution, getGemDistribution, getCubesDistribution, getCoinsDistribution, prize } from './MissionRewards.js';
 import '../Css/MissionGame.css';
 import {
-  handleLogin,
   checkMissionStatus,
-  handleStartMission,
+  startMissionTransaction,
   completeMission,
   handleClaimRewards,
   getMissionRanking,
   findUserByWallet,
-  updateBalances,
-  recordTransaction,
-  updateUserCoins
+  updateBalances
 } from './MissionGameJS.js';
+import { doc, getDoc, updateDoc, setDoc } from 'firebase/firestore';
+import { db } from '../../Firebase/firebase';
+import { v4 as uuidv4 } from 'uuid';
+
+const sessionID = navigator.userAgent;
+
+const createSessionToken = () => uuidv4();
+
+const setActiveSession = async (userID, sessionToken) => {
+  const userDocRef = doc(db, "users", userID);
+  await updateDoc(userDocRef, { sessionToken });
+  localStorage.setItem('sessionToken', sessionToken);
+};
+
+const checkActiveSession = async (userID, sessionToken) => {
+  const userDocRef = doc(db, "users", userID);
+  const userDoc = await getDoc(userDocRef);
+  if (userDoc.exists()) {
+    const userData = userDoc.data();
+    return userData.sessionToken === sessionToken;
+  }
+  return false;
+};
 
 const MissionGame = () => {
   const { state } = useLocation();
@@ -30,36 +50,44 @@ const MissionGame = () => {
   const [error, setError] = useState(null);
   const [ranking, setRanking] = useState([]);
   const navigate = useNavigate();
-  const [userExists, setUserExists] = useState(false);
   const [userData, setUserData] = useState(null);
   const [botonDeshabilitado, setBotonDeshabilitado] = useState(false);
   const [loading, setLoading] = useState(true);
-  const initialRender = useRef(true); // Ref to track initial render
-  const [initialCheckDone, setInitialCheckDone] = useState(false); // State to track the initial check
 
   useEffect(() => {
-    async function fetchUserData() {
+    const verifySession = async () => {
       if (userID) {
-        console.log('Fetching user data...');
-        try {
-          const userDoc = await findUserByWallet(userID);
-          if (userDoc) {
-            const data = userDoc.data();
-            setUserData(data);
-            console.log('User data found and set:', data);
-          } else {
-            console.log('User data not found.');
-          }
-        } catch (error) {
-          console.error('Error fetching user data:', error);
-        } finally {
-          setLoading(false);
+        const sessionToken = localStorage.getItem('sessionToken') || createSessionToken();
+        const isActive = await checkActiveSession(userID, sessionToken);
+        if (!isActive) {
+          await setActiveSession(userID, sessionToken);
+        } else {
+          //alert('You already have an active session on another device or browser.');
+          //navigate('/'); // Redirigir al usuario a la página de inicio o a una página de error
         }
-      } else {
-        setLoading(false);
       }
-    }
-    fetchUserData();
+      setLoading(false);
+    };
+    verifySession();
+
+    return () => {
+      if (userID) {
+        //clearActiveSession(userID);
+      }
+    };
+  }, [userID, navigate]);
+
+  useEffect(() => {
+    const handleUnload = async () => {
+      if (userID) {
+        //await clearActiveSession(userID);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleUnload);
+    };
   }, [userID]);
 
   const handleTransaction = async (amount) => {
@@ -67,15 +95,14 @@ const MissionGame = () => {
   };
 
   useEffect(() => {
-    if (!initialCheckDone && userID && mission) {
+    if (userID && mission) {
       async function checkStatus() {
         console.log('Checking mission status...');
         await checkMissionStatus(userID, setMissionDocID, setRemainingTime, setMissionStarted, setMissionStatus, setMission, setError, navigate);
       }
       checkStatus();
-      setInitialCheckDone(true); // Mark the initial check as done
     }
-  }, [initialCheckDone, userID, mission, navigate]); // Dependencies to ensure it runs only once when userID or mission changes
+  }, [userID, mission, navigate]);
 
   useEffect(() => {
     let timerInterval;
@@ -97,12 +124,11 @@ const MissionGame = () => {
 
   useEffect(() => {
     if (mission && mission.name) {
-      fetchBalanceAndRanking(); // Obtener balance y ranking solo al cargar la página o después de reclamar recompensas
+      fetchBalanceAndRanking();
     }
-  }, [mission?.name]); // Agregar esta dependencia para asegurarse de que se ejecute solo cuando el nombre de la misión cambie
+  }, [mission?.name]);
 
   const fetchBalanceAndRanking = async () => {
-    // Obtener balance del usuario
     if (userID) {
       const userDoc = await findUserByWallet(userID);
       if (userDoc) {
@@ -111,7 +137,6 @@ const MissionGame = () => {
       }
     }
 
-    // Obtener ranking de misiones
     if (mission && mission.name) {
       console.log('Fetching mission ranking for:', mission.name);
       const missionRanking = await getMissionRanking(mission.name);
@@ -121,7 +146,7 @@ const MissionGame = () => {
   };
 
   const completeCurrentMission = () => {
-    completeMission(mission, missionDocID, setMissionStatus, setMissionStarted, setRewards, setCoinReward);
+    completeMission(mission, missionDocID, setMissionStatus, setMissionStarted, setRewards, setCoinReward, userID);
   };
 
   const claimRewards = async () => {
@@ -131,13 +156,12 @@ const MissionGame = () => {
       return;
     }
     await handleClaimRewards(missionDocID, rewards, coinReward, userData, setUserData, setBotonDeshabilitado, handleCloseMissionComplete);
-    fetchBalanceAndRanking(); // Actualizar balance y ranking después de reclamar las recompensas
-    // Redirigir a la misma página para forzar una recarga
+    fetchBalanceAndRanking();
     navigate(0);
   };
 
   const startMission = () => {
-    handleStartMission(userID, mission, setMissionStarted, setMissionStatus, setMissionDocID, setError, navigate);
+    startMissionTransaction(userID, mission, setMissionStarted, setMissionStatus, setMissionDocID, setError, navigate);
   };
 
   const handleCloseMissionComplete = () => {
@@ -248,7 +272,7 @@ const MissionGame = () => {
               {coinReward > 0 && (
                 <li className="reward-item">
                   <img src={prize['Coins'].imageURL} alt="Coins" className="reward-image" />
-                  <span className="reward-name">Coins {coinReward}</span>
+                  <span className="reward-name">SHCoins: {coinReward}</span>
                 </li>
               )}
             </ul>

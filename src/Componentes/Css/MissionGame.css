@@ -382,9 +382,10 @@
         width: 300px;
         overflow-y: auto;
         position: relative;
-        top: 250px;
+        top: 10%;
         border-radius: 5px;
         left: 0;
+        z-index: 1009;
     }
 
     .reward-image {

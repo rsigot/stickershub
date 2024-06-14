@@ -1,98 +1,95 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { LoginUAL } from './LoginUAL.jsx';
 import './Css/MissionMenu.css';
 import { useNavigate } from 'react-router-dom';
-import { db } from '../Firebase/firebase.js';
-import { collection, query, where, getDocs } from 'firebase/firestore';
 import MissionGameButtons from './Js/MissionGameButtons.js';
+import { UALContext } from 'ual-reactjs-renderer';
+import { v4 as uuidv4 } from 'uuid';
+import { doc, getDoc, updateDoc, setDoc } from 'firebase/firestore';
+import { db } from '../Firebase/firebase';
 
-// Función para verificar el estado de whitelist en Firestore
-async function checkWhitelistStatus(userID) {
-    const cacheKey = `whitelistStatus_${userID}`;
-    const cachedStatus = localStorage.getItem(cacheKey);
+const sessionID = navigator.userAgent;
 
-    if (cachedStatus !== null) {
-        return JSON.parse(cachedStatus);
-    }
+const createSessionToken = () => uuidv4();
 
-    try {
-        console.log('Buscando usuario en la whitelist:', userID);
-        const usersRef = collection(db, 'users');
-        const q = query(usersRef, where('wallet', '==', userID));
-        const querySnapshot = await getDocs(q);
+const setActiveSession = async (userID, sessionToken) => {
+  const userDocRef = doc(db, "users", userID);
+  await updateDoc(userDocRef, { sessionToken });
+  localStorage.setItem('sessionToken', sessionToken);
+};
 
-        if (!querySnapshot.empty) {
-            console.log('Documentos encontrados para el usuario:', userID);
-            const userData = querySnapshot.docs[0].data(); // Asumimos que solo hay un documento por usuario
-
-            // Convertir el valor del campo whitelist a un booleano explícito
-            const isWhitelisted = userData.whitelist === true;
-
-            // Guardar el estado de whitelist en localStorage
-            localStorage.setItem(cacheKey, JSON.stringify(isWhitelisted));
-
-            if (isWhitelisted) {
-                console.log('Usuario en whitelist:', userID);
-                return true;
-            } else {
-                console.log('Usuario no está en whitelist:', userID);
-                return false;
-            }
-        } else {
-            console.error('No se encontró ningún documento para el usuario:', userID);
-            return false;
-        }
-    } catch (error) {
-        console.error('Error checking whitelist status:', error);
-        return false;
-    }
-}
+const checkActiveSession = async (userID, sessionToken) => {
+  const userDocRef = doc(db, "users", userID);
+  const userDoc = await getDoc(userDocRef);
+  if (userDoc.exists()) {
+    const userData = userDoc.data();
+    return userData.sessionToken === sessionToken;
+  }
+  return false;
+};
 
 export default function MissionMenu() {
-    const [userID, setUserID] = useState(null);
-    const [showBlacklistModal, setShowBlacklistModal] = useState(false);
-    const navigate = useNavigate();
+  const [userID, setUserID] = useState(null);
+  const [showBlacklistModal, setShowBlacklistModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const sessionID = navigator.userAgent;
+  const ual = useContext(UALContext);
 
-    useEffect(() => {
-        if (userID) {
-            console.log('Verificando estado de whitelist para el usuario:', userID);
-            // Llamamos a la API para verificar el estado de whitelist
-            checkWhitelistStatus(userID).then(isWhitelisted => {
-                if (!isWhitelisted) {
-                    console.log('Usuario no está en whitelist. Mostrando modal.');
-                    setShowBlacklistModal(true); 
-                } else {
-                    console.log('Usuario está en whitelist. Permitiendo acceso.');
-                }
-            });
+  useEffect(() => {
+    if (ual.activeUser) {
+      ual.activeUser.getAccountName().then((accountName) => {
+        setUserID(accountName);
+      });
+    }
+  }, [ual.activeUser]);
+
+  useEffect(() => {
+    const verifySession = async () => {
+      if (userID) {
+        const sessionToken = localStorage.getItem('sessionToken') || createSessionToken();
+        const isActive = await checkActiveSession(userID, sessionToken);
+        if (!isActive) {
+          await setActiveSession(userID, sessionToken);
+        } else {
+          //alert('You already have an active session on another device or browser.');
+          //navigate('/'); // Redirigir al usuario a la página de inicio o a una página de error
         }
-    }, [userID]);
-
-    const handleBlacklistModalClose = () => {
-        setShowBlacklistModal(false);
-        navigate('/');
+      }
+      setLoading(false);
     };
+    verifySession();
+  }, [userID, navigate]);
 
-    return (
-        <>
-            <div className="image">
-                {showBlacklistModal && (
-                    <div className="modal">
-                        <div className="modal-content">
-                            <p>You are on the blacklist!</p>
-                            <button onClick={handleBlacklistModalClose}>Accept</button>
-                        </div>
-                    </div>
-                )}
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-                <div className="login-container">
-                    <LoginUAL onLogin={setUserID} />
-                </div>
+  const handleBlacklistModalClose = () => {
+    setShowBlacklistModal(false);
+    navigate('/');
+  };
 
-                <div>
-                    <MissionGameButtons userID={userID} />
-                </div>
+  return (
+    <>
+      <div className="image">
+        {showBlacklistModal && (
+          <div className="modal">
+            <div className="modal-content">
+              <p>You are on the blacklist!</p>
+              <button onClick={handleBlacklistModalClose}>Accept</button>
             </div>
-        </>
-    );
+          </div>
+        )}
+
+        <div className="login-container">
+          <LoginUAL onLogin={setUserID} />
+        </div>
+
+        <div>
+          <MissionGameButtons userID={userID} />
+        </div>
+      </div>
+    </>
+  );
 }

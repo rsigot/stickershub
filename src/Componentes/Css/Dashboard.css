@@ -1,5 +1,9 @@
 body,
 html {
+  background-size: cover; 
+  background-position: center;
+  background-repeat: repeat;
+  overflow: auto;
   margin: 0;
   padding: 0;
   height: 100%;
@@ -7,15 +11,13 @@ html {
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: auto;
 }
 
 .dashboard-container {
-  padding: 20px;
   background-color: #ffffff;
   display: flex;
   flex-direction: column;
-  width: 85%;
+  width: 60%;
   max-width: 1200px; /* Limita el ancho máximo para que no ocupe toda la pantalla */
   height: auto; /* Ajusta la altura automáticamente según el contenido */
   margin: 40px 0 40px; /* Asegura un margen superior para que no se corte el contenido */
@@ -24,7 +26,8 @@ html {
   text-align: center;
   position: absolute;
   top: 10px;
-  left: 5%;
+  left: 20%;
+  right: 20%;
   overflow: auto;
 }
 

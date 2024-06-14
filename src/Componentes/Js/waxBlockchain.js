@@ -3,6 +3,12 @@ import { JsSignatureProvider } from "eosjs/dist/eosjs-jssig";
 import { TextEncoder, TextDecoder } from 'text-encoding'; // Usar text-encoding para la compatibilidad en el navegador
 import fetch from 'node-fetch';
 
+// Define las constantes TAPOS
+const TAPOS = {
+  blocksBehind: 3,
+  expireSeconds: 30,
+};
+
 const privateKey = process.env.REACT_APP_WAX_PRIVATE_KEY;
 const endpoint = process.env.REACT_APP_WAX_ENDPOINT;
 

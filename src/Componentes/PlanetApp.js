@@ -7,16 +7,22 @@ import { LoginUAL } from './LoginUAL.jsx'; // Asegúrate de importar tu componen
 
 function PlanetApp() {
     const [userID, setUserID] = useState(null);
+    const [isWhitelisted, setIsWhitelisted] = useState(false);
+    const [isHolder, setIsHolder] = useState(false);
+
+    const handleLogin = (userID, isWhitelisted, isHolder) => {
+        setUserID(userID);
+        setIsWhitelisted(isWhitelisted);
+        setIsHolder(isHolder);
+    };
 
     return (
         <div className="planet-app">
-            
             <div className="login-container">
-                <LoginUAL onLogin={setUserID} />
+                <LoginUAL onLogin={handleLogin} />
             </div>
-            <Planet />
-            <ButtonsContainer />
-            
+            <Planet userID={userID} isWhitelisted={isWhitelisted} isHolder={isHolder} />
+            <ButtonsContainer userID={userID} />
         </div>
     );
 }

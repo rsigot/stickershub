@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../Firebase/firebase.js';
-import LoginUAL from './LoginUAL.jsx';
+import { LoginUAL } from './LoginUAL.jsx';
 import { useNavigate } from 'react-router-dom';
 import './Css/Dashboard.css';
 
@@ -79,7 +79,7 @@ const Dashboard = () => {
     const usersCol = collection(db, 'users');
     const missionsCol = collection(db, 'missions');
     const usersSnapshot = await getDocs(usersCol);
-    const usersData = usersSnapshot.docs.map(doc => doc.data());
+    const usersData = usersSnapshot.docs.map(doc => doc.data()).filter(user => user.wallet);
 
     const missionsSnapshot = await getDocs(missionsCol);
     const missionsData = missionsSnapshot.docs.map(doc => doc.data());
@@ -171,7 +171,7 @@ const Dashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {usersStats.map(user => (
+                  {usersStats.map((user, index) => (
                     <tr key={user.wallet}>
                       <td>{user.wallet}</td>
                       <td>{user.coins}</td>
@@ -200,7 +200,7 @@ const Dashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {usersStats.map(user => (
+                  {usersStats.map((user, index) => (
                     <tr key={user.wallet}>
                       <td>{user.wallet}</td>
                       <td>{user.Moon || 0}</td>

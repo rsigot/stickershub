@@ -1,0 +1,207 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background: url('https://i.imgur.com/zEhj8ln.png') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+    overflow: hidden; /* Hide scrollbars */
+}
+.welcome-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    position: relative;
+    flex-direction: column;
+    overflow: hidden;
+    background: url(https://i.imgur.com/vPm7KYJ.jpeg);
+    background-position: bottom;
+    background-repeat: no-repeat;
+    background-size: 1300px;
+    background-color: black;
+}
+.welcome-section img {
+    width: 30%;
+    max-width: 700px;
+    position: absolute;
+    top: 90%;
+    left: 51%;
+    transform: translate(-50%, -50%);
+}
+.welcome-section .content {
+    z-index: 1;
+    position: relative;
+}
+.welcome-section h1 {
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+.welcome-section button {
+    background-color: #ff6347;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1.2em;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border-radius: 5px;
+    margin: 10px;
+}
+.welcome-section button:hover {
+    background-color: #ff4500;
+}
+header {
+    background-color: rgba(51, 51, 51, 0.8);
+    color: white;
+    padding: 10px 0;
+    text-align: center;
+    display: none;
+    position: relative;
+}
+.login-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #ff6347;
+    border: none;
+    padding: 10px 20px;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border-radius: 5px;
+}
+.login-button:hover {
+    background-color: #ff4500;
+}
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+nav ul li {
+    display: inline;
+}
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+nav ul li a:hover {
+    color: #ff6347;
+}
+section {
+    padding: 60px 20px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.7);
+    margin: 10px;
+    border-radius: 10px;
+    display: none;
+}
+h1, h2 {
+    color: #ff6347;
+}
+.accordion {
+    margin: 20px auto;
+    max-width: 600px;
+}
+.accordion-item {
+    border-bottom: 1px solid #ddd;
+}
+.accordion-button {
+    background: none;
+    border: none;
+    padding: 15px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    outline: none;
+    font-size: 18px;
+    color: #fff;
+    transition: background 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.accordion-button:hover {
+    background-color: #444;
+}
+.accordion-content {
+    display: none;
+    padding: 15px;
+    background-color: #333;
+}
+.contact-icons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+.contact-icons a {
+    color: white;
+    text-decoration: none;
+    font-size: 2em;
+    transition: color 0.3s ease;
+}
+.contact-icons a:hover {
+    color: #ff6347;
+}
+.section-images {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+.section-images img {
+    width: 100%;
+    max-width: 300px;
+    height: 300px;
+    border-radius: 10px;
+}
+.tech-info, .nft-info, .rarity-info, .profit-tracker-info {
+    text-align: left;
+    margin: 20px auto;
+    max-width: 800px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+}
+.play-now-button {
+    background-color: #ff6347;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+.play-now-button:hover {
+    background-color: #ff4500;
+}
+.image-icon {
+    width: 30px;
+    height: 30px;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+th {
+    background-color: #131116;
+    text-align: center;
+    color: #fff;
+}
+td {
+    text-align: center;
+}
