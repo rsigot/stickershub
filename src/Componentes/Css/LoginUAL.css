@@ -67,7 +67,7 @@
     margin: 10px 0;
     font-size: 12px;
     position: fixed;
-    top: 80px;
+    top: 15%;
     left: 20px;
     color: white;
     align-items:center;
@@ -101,7 +101,5 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-.walletspan {
-    top: 80px;
-}
+
 }

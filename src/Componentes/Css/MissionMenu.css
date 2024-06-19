@@ -237,8 +237,6 @@ html {
 .button-menu:hover {
     opacity: 0.8;
     /* Le da un efecto de opacidad al pasar el cursor */
-    cursor: pointer;
-    /* Asegura que el cursor siga siendo una mano */
 }
 
 .coming-soon {

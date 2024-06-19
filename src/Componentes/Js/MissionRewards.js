@@ -1,8 +1,8 @@
 
-// Duraciones de misiones en segundos
-const DURATION_1H = 10;         // Moon 45 minutos  2700
-const DURATION_2H = 11;         // Mars 90 minutos  5400
-const DURATION_4H = 12;         // Jupiter 3 horas  10800
+// Duración de las misiones en segundos
+const DURATION_1H = 2700;         // Moon 45 minutos  2700
+const DURATION_2H = 5400;         // Mars 90 minutos  5400
+const DURATION_4H = 10800;         // Jupiter 3 horas  10800
 const DURATION_8H = 21600;      // Alpha Centauri  6 horas  21600
 const DURATION_16H = 43200;     // Andromeda Galaxy  12 horas  43200
 const DURATION_32H = 86400;     // Deep Space 24 horas  86400

@@ -5,9 +5,9 @@ import { getActiveMission } from './MissionGameJS.js'; // Importa la nueva funci
 
 // parámetros de las misiones: duración en segundos , nombre.
 const missions = [
-  [10, "Moon"], // 45 minutos  2700
-  [11, "Mars"], // 90 minutos  5400
-  [12, "Jupiter"], // 3 horas  10800
+  [2700, "Moon"], // 45 minutos  
+  [5400, "Mars"], // 90 minutos  
+  [10800, "Jupiter"], // 3 horas 
   [21600, "Alpha Centauri"], // 6 horas
   [43200, "Andromeda Galaxy"], // 12 horas
   [86400, "Deep Space"] // 24 horas
@@ -16,16 +16,21 @@ const missions = [
 export function MissionGameButtons({ userID }) {
   const navigate = useNavigate();
   const [activeMission, setActiveMission] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchActiveMission = async () => {
       if (userID) {
         try {
-          const missionName = await getActiveMission(userID);
-          setActiveMission(missionName);
+          const mission = await getActiveMission(userID);
+          setActiveMission(mission);
         } catch (error) {
           console.error('Error fetching active mission:', error);
+        } finally {
+          setLoading(false);
         }
+      } else {
+        setLoading(false);
       }
     };
     fetchActiveMission();
@@ -46,24 +51,33 @@ export function MissionGameButtons({ userID }) {
     }
   };
 
- 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="container-menu">
       <div className="grid">
-        {missions.slice(0, 6).map((mission, index) => {
+        {missions.map((mission, index) => {
           const [duration, name] = mission;
           let isButtonEnabled = false;
+          let onClickFunction = null;
 
-          if (activeMission) {
-            isButtonEnabled = activeMission === name;
-          } else {
-            isButtonEnabled = ["Moon", "Mars", "Jupiter"].includes(name);
+          // Siempre deshabilitar misiones de 6 horas o más
+          if (duration < 21600) {
+            if (activeMission && activeMission.name === name) {
+              isButtonEnabled = true;
+              onClickFunction = () => handleSelectMission(mission);
+            } else if (!activeMission && ["Moon", "Mars", "Jupiter"].includes(name)) {
+              isButtonEnabled = true;
+              onClickFunction = () => handleSelectMission(mission);
+            }
           }
 
           return (
             <div className="grid-item" key={index}>
               <h2>{name} Mission</h2>
-              <h3>Possible Rewards: Max {duration < 7200 ? 'Basic' : duration < 14400 ? 'Rare' : duration < 28800 ? 'Epic' : 'Legendary'}</h3>
+              <h3>Possible Max Rewards: {duration < 21600 ? 'Basic' : duration < 43200 ? 'Rare' : duration < 86400 ? 'Epic' : 'Legendary'}</h3>
               <h3>Duration: {formatDuration(duration)}</h3>
               {duration >= 21600 ? (
                 <>
@@ -74,8 +88,8 @@ export function MissionGameButtons({ userID }) {
                 </>
               ) : (
                 <button
-                  className={`button-menu ${!isButtonEnabled ? 'disabled' : ''}`}
-                  onClick={() => handleSelectMission(mission)}
+                  className={`button-menu ${isButtonEnabled ? '' : 'disabled'}`}
+                  onClick={onClickFunction}
                   disabled={!isButtonEnabled}
                 >
                   Launch Mission 🚀

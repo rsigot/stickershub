@@ -10,41 +10,19 @@ import {
   handleClaimRewards,
   getMissionRanking,
   findUserByWallet,
-  updateBalances
+  checkForMultipleStartedMissions,
+  getActiveMission
 } from './MissionGameJS.js';
-import { doc, getDoc, updateDoc, setDoc } from 'firebase/firestore';
-import { db } from '../../Firebase/firebase';
-import { v4 as uuidv4 } from 'uuid';
-
-const sessionID = navigator.userAgent;
-
-const createSessionToken = () => uuidv4();
-
-const setActiveSession = async (userID, sessionToken) => {
-  const userDocRef = doc(db, "users", userID);
-  await updateDoc(userDocRef, { sessionToken });
-  localStorage.setItem('sessionToken', sessionToken);
-};
-
-const checkActiveSession = async (userID, sessionToken) => {
-  const userDocRef = doc(db, "users", userID);
-  const userDoc = await getDoc(userDocRef);
-  if (userDoc.exists()) {
-    const userData = userDoc.data();
-    return userData.sessionToken === sessionToken;
-  }
-  return false;
-};
 
 const MissionGame = () => {
   const { state } = useLocation();
   const [userID, setUserID] = useState(state?.userID || null);
-  const [mission, setMission] = useState(state);
+  const [mission, setMission] = useState(null); // Cambiado a null
   const [missionStarted, setMissionStarted] = useState(false);
   const [rewards, setRewards] = useState([]);
   const [coinReward, setCoinReward] = useState(0);
   const [rewardsVisible, setRewardsVisible] = useState(false);
-  const [remainingTime, setRemainingTime] = useState(mission?.duration || 0);
+  const [remainingTime, setRemainingTime] = useState(0); // Cambiado a 0
   const [missionStatus, setMissionStatus] = useState('default');
   const [missionDocID, setMissionDocID] = useState(null);
   const [error, setError] = useState(null);
@@ -55,44 +33,22 @@ const MissionGame = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const verifySession = async () => {
+    const fetchActiveMissionData = async () => {
       if (userID) {
-        const sessionToken = localStorage.getItem('sessionToken') || createSessionToken();
-        const isActive = await checkActiveSession(userID, sessionToken);
-        if (!isActive) {
-          await setActiveSession(userID, sessionToken);
-        } else {
-          //alert('You already have an active session on another device or browser.');
-          //navigate('/'); // Redirigir al usuario a la página de inicio o a una página de error
+        const activeMission = await getActiveMission(userID);
+        if (activeMission) {
+          setMission(activeMission);
+          setRemainingTime(activeMission.duration);
+        } else if (state) {
+          setMission(state);
+          setRemainingTime(state.duration);
         }
       }
       setLoading(false);
     };
-    verifySession();
 
-    return () => {
-      if (userID) {
-        //clearActiveSession(userID);
-      }
-    };
-  }, [userID, navigate]);
-
-  useEffect(() => {
-    const handleUnload = async () => {
-      if (userID) {
-        //await clearActiveSession(userID);
-      }
-    };
-
-    window.addEventListener('beforeunload', handleUnload);
-    return () => {
-      window.removeEventListener('beforeunload', handleUnload);
-    };
-  }, [userID]);
-
-  const handleTransaction = async (amount) => {
-    await updateBalances(userID, amount, userData, setUserData);
-  };
+    fetchActiveMissionData();
+  }, [userID, state]);
 
   useEffect(() => {
     if (userID && mission) {
@@ -145,7 +101,8 @@ const MissionGame = () => {
     }
   };
 
-  const completeCurrentMission = () => {
+  const completeCurrentMission = async () => {
+    await checkForMultipleStartedMissions(userID);
     completeMission(mission, missionDocID, setMissionStatus, setMissionStarted, setRewards, setCoinReward, userID);
   };
 
@@ -189,12 +146,12 @@ const MissionGame = () => {
               onClick={startMission}
               disabled={missionStarted}
             >
-              Start {mission.name} Mission Now!
+              Start {mission?.name || 'Mission'} Mission Now!
             </button>
             {missionStatus === 'in-progress' && (
               <div className="progress-container">
                 <div className="progress-bar" style={{ width: `${(1 - remainingTime / mission.duration) * 100}%` }}></div>
-                <span className="progress-text">{mission.name} Mission in Progress</span>
+                <span className="progress-text">{mission?.name || 'Mission'} Mission in Progress</span>
               </div>
             )}
             <div className={`timer ${missionStatus === 'complete' ? 'hidden' : ''}`}>
@@ -237,7 +194,7 @@ const MissionGame = () => {
                   <h4>Coins</h4>
                   <ul>
                     {Object.entries(getCoinsDistribution(mission.duration)).map(([name, probability], index) => (
-                      <li key={index}>You will earn <b>{probability} Coins</b> for completing this mission.</li>
+                      <li key={index}>You will earn <b>{probability} SHCoins</b> for completing this mission.</li>
                     ))}
                   </ul>
                 </div>
@@ -247,7 +204,7 @@ const MissionGame = () => {
         )}
         {ranking.length > 0 && (
           <div className="ranking-container">
-            <h3>{mission.name} Mission Top 3</h3>
+            <h3>{mission?.name || 'Mission'} Top 3</h3>
             <ul className="ranking-list">
               {ranking.map(([wallet, count], index) => (
                 <li key={index} className="ranking-item">

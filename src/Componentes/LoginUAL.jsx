@@ -8,8 +8,6 @@ import { v4 as uuidv4 } from 'uuid';
 import './Css/LoginUAL.css';
 import logo from '../Img/Logo-sh1-text.png';
 
-const sessionID = navigator.userAgent;
-
 export const LoginUAL = ({ onLogin }) => { // Función por defecto
     const [userID, setUserID] = useState(null);
     const [isWhitelisted, setIsWhitelisted] = useState(false);
@@ -222,16 +220,15 @@ export const LoginUAL = ({ onLogin }) => { // Función por defecto
                 <>
                     <button className="WAXUALbutton" onClick={handleLogout}>🚪 Logout</button>
                     <p className="walletspan">
-                        Welcome: {userID}
-                        <br /> <br /> {isWhitelisted && " (WHITELIST) "}
-                        <br /> {isHolder && (" (BETA TESTER) ")}
-                        <br /> {isHolder && (
+                        Welcome: {userID} {isWhitelisted && " (WHITELIST) "}
+                        <br /> <br /> {isHolder && (
                             <img
                                 src="https://atomichub-ipfs.com/ipfs/QmeP4ph9TXJGRVJfEEfXkU7YpLtAfpgsHXMcYxMmuZowUZ"
                                 alt="Beta Tester"
                                 style={{ width: '100%' }}
                             />
                         )}
+                        <br /> {isHolder && (" (BETA TESTER) ")}
                         <br /> <br /> SHCOINS: {coins} <img className="coins" src="https://i.imgur.com/5MbUxQA.png" alt="Coins" />
                     </p>
                 </>

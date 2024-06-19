@@ -1,10 +1,27 @@
-import { runTransaction, collection, addDoc, doc, updateDoc, getDocs, getDoc, query, where, setDoc } from 'firebase/firestore';
+import { writeBatch, runTransaction, collection, addDoc, doc, updateDoc, getDocs, getDoc, query, where, setDoc } from 'firebase/firestore';
 import { db } from '../../Firebase/firebase.js';
 import { generateCritterReward, generateGemReward, generateCubeReward, generateCoinReward, prize } from './MissionRewards.js';
 import { nuevoMint } from './MissionGameMint.js';
 
 let cachedUserData = {};
 const cache = {};
+
+export const checkForMultipleStartedMissions = async (userID) => {
+  const missionsCol = collection(db, "missions");
+  const q = query(missionsCol, where("userId", "==", userID), where("status", "==", "started"));
+  const querySnapshot = await getDocs(q);
+
+  if (querySnapshot.size > 1) {
+    const batch = writeBatch(db);
+    querySnapshot.docs.forEach((doc, index) => {
+      if (index > 0) { // Skip the first document
+        const docRef = doc.ref;
+        batch.update(docRef, { status: "canceled" });
+      }
+    });
+    await batch.commit();
+  }
+};
 
 export const updateBalances = async (userWallet, amount, userData, setUserData) => {
   if (userData) {
@@ -154,7 +171,10 @@ export const getActiveMission = async (userID) => {
   if (!querySnapshot.empty) {
     const doc = querySnapshot.docs[0];
     const missionData = doc.data();
-    return missionData.name;
+    return {
+      id: doc.id,
+      ...missionData,
+    };
   } else {
     return null;
   }
@@ -197,7 +217,6 @@ export const completeMission = async (mission, missionDocID, setMissionStatus, s
   if (missionDoc.exists() && missionDoc.data().rewards) {
     setRewards(missionDoc.data().rewards.nftRewards);
     setCoinReward(missionDoc.data().rewards.coinReward || 0);
-    //await clearActiveSession(userID, navigator.userAgent); // Limpiar la sesión activa
     return;
   }
 

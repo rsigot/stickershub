@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import '../Css/PlanetApp.css'; // Asegúrate de tener un archivo CSS para los estilos
 
 function Planet({ userID, isWhitelisted, isHolder }) {
-  const isDisabled = !userID;
   console.log("From planet.js: " + userID );
   console.log("Whitelist: " + isWhitelisted);
   console.log("NFT Holder: " + isHolder);
@@ -44,7 +43,7 @@ function Planet({ userID, isWhitelisted, isHolder }) {
       </div>
       <div id="satellite5" className={`satellite ${!userID || (!isWhitelisted && !isHolder) ? 'disabled' : ''}`} onClick={handleSatellite5Click}>
         <div className="satellite-label">Mission Spacecraft</div>
-        <div className="coming-soon yellow">🔬Beta Testers Only</div>
+        <div className="coming-soon yellow">🥼Beta Testers Only</div>
       </div>
       <div id="satellite6" className="satellite disabled">
         <div className="satellite-label">Space Pizzeria</div>
