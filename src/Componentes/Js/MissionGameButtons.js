@@ -76,9 +76,9 @@ export function MissionGameButtons({ userID }) {
 
           return (
             <div className="grid-item" key={index}>
-              <h2>{name} Mission</h2>
-              <h3>Possible Max Rewards: {duration < 21600 ? 'Basic' : duration < 43200 ? 'Rare' : duration < 86400 ? 'Epic' : 'Legendary'}</h3>
-              <h3>Duration: {formatDuration(duration)}</h3>
+              <h3>{name} Mission</h3>
+              <h4>Possible Max Rewards: {duration < 21600 ? 'Basic' : duration < 43200 ? 'Rare' : duration < 86400 ? 'Epic' : 'Legendary'}</h4>
+              <h4>Duration: {formatDuration(duration)}</h4>
               {duration >= 21600 ? (
                 <>
                   <button className="button-menu disabled" disabled>

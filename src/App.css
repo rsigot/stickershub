@@ -1,9 +1,8 @@
-body, html {
-  background-image: url('./Img/background-mainmenu.jpg');
-  background-size:cover; 
-  background-position: center;
-  background-repeat:no-repeat;
+body,
+html {
   overflow: auto;
+  background: url(https://i.imgur.com/6BBbzm5.jpg) no-repeat center center fixed;
+  background-size: cover;
 }
 
 .App {
@@ -40,6 +39,7 @@ body, html {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }

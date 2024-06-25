@@ -16,7 +16,7 @@ function Planet({ userID, isWhitelisted, isHolder }) {
 
   const handleSatellite8Click = () => {
     if (isWhitelisted) {
-      window.location.href = '/NpcMarketplace';
+      window.location.href = '/NpcJewelry';
     } else {
       alert('Access denied: Only Whitelisted players can access this satellite.');
     }

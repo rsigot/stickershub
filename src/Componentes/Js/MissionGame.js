@@ -163,11 +163,11 @@ const MissionGame = () => {
         )}
         {rewards && (
           <div className={`possible-rewards-container ${missionStatus === 'complete' ? 'hidden' : ''}`}>
-            <h3 onClick={() => setRewardsVisible(!rewardsVisible)}>Possible Rewards</h3>
+            <h2 onClick={() => setRewardsVisible(!rewardsVisible)}>Possible Rewards</h2>
             {rewardsVisible && (
               <>
                 <div className="reward-section">
-                  <h4>Critters</h4>
+                  <h3><br />Critters</h3>
                   <ul>
                     {Object.entries(getCritterDistribution(mission.duration)).map(([name, probability], index) => (
                       <li key={index}>{name}: {probability}%</li>
@@ -175,7 +175,7 @@ const MissionGame = () => {
                   </ul>
                 </div>
                 <div className="reward-section">
-                  <h4>Gems</h4>
+                  <h3>Gems</h3>
                   <ul>
                     {Object.entries(getGemDistribution(mission.duration)).map(([name, probability], index) => (
                       <li key={index}>{name}: {probability}%</li>
@@ -183,7 +183,7 @@ const MissionGame = () => {
                   </ul>
                 </div>
                 <div className="reward-section">
-                  <h4>Cubes</h4>
+                  <h3>Cubes</h3>
                   <ul>
                     {Object.entries(getCubesDistribution(mission.duration)).map(([name, probability], index) => (
                       <li key={index}>{name}: {probability}%</li>
@@ -191,7 +191,7 @@ const MissionGame = () => {
                   </ul>
                 </div>
                 <div className="reward-section">
-                  <h4>Coins</h4>
+                  <h3>Coins</h3>
                   <ul>
                     {Object.entries(getCoinsDistribution(mission.duration)).map(([name, probability], index) => (
                       <li key={index}>You will earn <b>{probability} SHCoins</b> for completing this mission.</li>
@@ -204,7 +204,7 @@ const MissionGame = () => {
         )}
         {ranking.length > 0 && (
           <div className="ranking-container">
-            <h3>{mission?.name || 'Mission'} Top 3</h3>
+            <h2>{mission?.name || 'Mission'} Mission Top 3</h2><br />
             <ul className="ranking-list">
               {ranking.map(([wallet, count], index) => (
                 <li key={index} className="ranking-item">

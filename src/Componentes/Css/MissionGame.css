@@ -228,6 +228,7 @@
 }
 
 .ranking-container {
+    color: black;
     font-size: 10px;
     position: fixed;
     top: 101px;
@@ -257,6 +258,7 @@
 }
 
 .possible-rewards-container {
+    color: black;
     font-size: 10px;
     position: fixed;
     top: 191px;

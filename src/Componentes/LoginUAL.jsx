@@ -160,7 +160,7 @@ export const LoginUAL = ({ onLogin }) => { // Función por defecto
         ual.logout();
         onLogin(null);
         setCoins(null); // Limpiar el valor de coins al cerrar sesión
-        navigate('/'); // Redirigir al usuario a la página de inicio
+        navigate('/ProfitTracker'); // Redirigir al usuario a la página de inicio
     };
 
     const alta = async () => {
@@ -207,13 +207,13 @@ export const LoginUAL = ({ onLogin }) => { // Función por defecto
 
     return (
         <div className="login">
-            <Link to="/">
+            <Link to="/ProfitTracker">
                 <div className="title">
                     <img src={logo} alt="STICKERS HUB" className="logo-image" />
                     <br />(BETA VERSION)
                 </div>
             </Link>
-            {location.pathname !== '/' && (
+            {location.pathname !== '/ProfitTracker' && (
                 <button className="goBack" onClick={goBack}>⏪ Go Back</button>
             )}
             {ual?.activeUser ? (
